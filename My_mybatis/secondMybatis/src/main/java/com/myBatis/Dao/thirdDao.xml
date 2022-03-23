@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mybatis-3-mapper.dtd是约束文件的名称，用来规定我们代码的格式-->
+<mapper namespace="com.myBatis.Dao.thirdDao">
+    <sql id="select">
+        select *from third
+    </sql>
+    <!--mapper是根标签   namespace是命名空间，内容应为Dao接口的全限定名称-->
+    <insert id="insert1">
+        insert into third values(#{name},#{age},#{sex})
+    </insert>
+    <select id="select1" resultType="com.myBatis.domain.third">
+        <include refid="select"/>
+        <where>
+            <if test="name!=null and name!='' ">
+               and name = #{name}
+            </if>
+        </where>
+    </select>
+    <resultMap id="one" type="com.myBatis.domain.third">
+        <id column="name" property="name"/>
+        <id column="age" property="age"/>
+        <id column="sex" property="sex"/>
+    </resultMap>
+    <select id="select2" resultMap="one">
+        <include refid="select"/>
+        <where>
+            <if  test="name!=null and name!=''">
+                and name=#{name}
+            </if>
+            <if test="age>0">
+                and age = #{age}
+            </if>
+        </where>
+    </select>
+
+</mapper>

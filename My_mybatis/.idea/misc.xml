@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/Final" />
+    <file type="web" url="file://$PROJECT_DIR$/SpringMVC" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/firstMybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/secondMybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/thirdMybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/forthMybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/SpringWithMybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/Sale/pom.xml" />
+        <option value="$PROJECT_DIR$/SALE/pom.xml" />
+        <option value="$PROJECT_DIR$/Final/pom.xml" />
+        <option value="$PROJECT_DIR$/Homework/pom.xml" />
+        <option value="$PROJECT_DIR$/Homework2/pom.xml" />
+        <option value="$PROJECT_DIR$/SpringMVC/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

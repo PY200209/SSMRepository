@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Sale" />
+        <module name="Homework2" />
+        <module name="SWM" />
+        <module name="SSM" />
+        <module name="thirdMybatis" />
+        <module name="third" />
+        <module name="Second" />
+        <module name="forthMybatis" />
+        <module name="secondMybatis" />
+        <module name="First" />
+        <module name="Final" />
+        <module name="firstMybatis" />
+        <module name="Homework" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Final" target="1.8" />
+      <module name="First" target="1.8" />
+      <module name="firstMybatis" target="1.8" />
+      <module name="forthMybatis" target="1.8" />
+      <module name="Homework" target="1.8" />
+      <module name="Homework2" target="1.8" />
+      <module name="Mysale" target="1.5" />
+      <module name="Sale" target="1.8" />
+      <module name="Second" target="1.8" />
+      <module name="secondMybatis" target="1.8" />
+      <module name="SpringMVC" target="1.8" />
+      <module name="SSM" target="1.8" />
+      <module name="SWM" target="1.8" />
+      <module name="third" target="1.8" />
+      <module name="thirdMybatis" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

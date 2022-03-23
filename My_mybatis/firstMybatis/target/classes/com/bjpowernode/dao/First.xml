@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mybatis-3-mapper.dtd是约束文件的名称，用来规定我们代码的格式-->
+<mapper namespace="com.bjpowernode.dao.FirstDao">
+    <!--mapper是根标签   namespace是命名空间，内容应为Dao接口的全限定名称-->
+    <select id="select" resultType="com.bjpowernode.domain.First">
+/*mapper 里面有我们所要用到的SQL语句的标签，id是其唯一标识符，要求和Dao接口里面的方法名一致，
+  resultType就是指返回的ResultSet与哪个类对应，因为一个类对应一个表，一个类的对象对应一行数据*/
+        select * from first;
+    </select>
+    <insert id="insert" >
+        insert into first(name,age) values(#{name},#{age})
+    </insert>
+    <delete id="delete">
+        delete from first where  name=#{name}
+    </delete>
+    <insert id="insert2">
+        insert into first values(#{myname},#{myage})
+    </insert>
+</mapper>

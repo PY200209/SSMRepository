@@ -1,0 +1,5 @@
+com\bjpowernode\domain\MStudent.class
+com\bjpowernode\domain\First.class
+com\bjpowernode\dao\MStudentDao.class
+com\bjpowernode\domain\BStudent.class
+com\bjpowernode\dao\BStudentDao.class

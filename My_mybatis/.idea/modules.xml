@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Final/Final.iml" filepath="$PROJECT_DIR$/Final/Final.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringMVC/First/First.iml" filepath="$PROJECT_DIR$/SpringMVC/First/First.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Homework/Homework.iml" filepath="$PROJECT_DIR$/Homework/Homework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Homework2/Homework2.iml" filepath="$PROJECT_DIR$/Homework2/Homework2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringMVC/SSM/SSM.iml" filepath="$PROJECT_DIR$/SpringMVC/SSM/SSM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringWithMybatis/SWM.iml" filepath="$PROJECT_DIR$/SpringWithMybatis/SWM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sale/Sale.iml" filepath="$PROJECT_DIR$/Sale/Sale.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringMVC/Second/Second.iml" filepath="$PROJECT_DIR$/SpringMVC/Second/Second.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringMVC/SpringMVC.iml" filepath="$PROJECT_DIR$/SpringMVC/SpringMVC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/firstMybatis/firstMybatis.iml" filepath="$PROJECT_DIR$/firstMybatis/firstMybatis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forthMybatis/forthMybatis.iml" filepath="$PROJECT_DIR$/forthMybatis/forthMybatis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/secondMybatis/secondMybatis.iml" filepath="$PROJECT_DIR$/secondMybatis/secondMybatis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringMVC/third/third.iml" filepath="$PROJECT_DIR$/SpringMVC/third/third.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thirdMybatis/thirdMybatis.iml" filepath="$PROJECT_DIR$/thirdMybatis/thirdMybatis.iml" />
+    </modules>
+  </component>
+</project>

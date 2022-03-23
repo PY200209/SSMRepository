@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mybatis-3-mapper.dtd是约束文件的名称，用来规定我们代码的格式-->
+<mapper namespace="com.sale.Dao.saleDao">
+    <!--mapper是根标签   namespace是命名空间，内容应为Dao接口的全限定名称-->
+    <insert id="insert1">
+        insert into sale values (#{id},#{gid},#{nums})
+    </insert>
+
+</mapper>

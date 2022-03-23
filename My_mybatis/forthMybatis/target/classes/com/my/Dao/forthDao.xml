@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mybatis-3-mapper.dtd是约束文件的名称，用来规定我们代码的格式-->
+<mapper namespace="com.my.Dao.forthDao">
+    <sql id="select">
+        select* from forth
+    </sql>
+
+    <resultMap id="tests" type="tests">
+        <id property="user" column="name"/>
+        <id property="howOld" column="age"/>
+    </resultMap>
+
+    <select id="select1" resultMap="tests">
+        <include refid="select"/>
+        <where>
+            <if test="name!=null and name!=''">
+                name=#{name}
+            </if>
+            <if test="age>0">
+                and age=#{age}
+            </if>
+        </where>
+    </select>
+    <select id="select2" resultMap="tests">
+        <include refid="select"/> where name={user} age=#{howOld} sex=#{sex}
+    </select>
+</mapper>

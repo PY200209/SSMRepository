@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mybatis-3-mapper.dtd是约束文件的名称，用来规定我们代码的格式-->
+<mapper namespace="com.swm.dao.studentDao">
+    <!--mapper是根标签   namespace是命名空间，内容应为Dao接口的全限定名称-->
+    <sql id="select">
+        select * from student
+    </sql>
+    <sql id="insert">
+        insert into student
+    </sql>
+    <resultMap id="student" type="student">
+        <id column="id" property="id"/>
+        <id column="name" property="name"/>
+        <id column="age" property="age"/>
+        <id column="status" property="status"/>
+    </resultMap>
+    <select id="select1" resultMap="student">
+        <include refid="select"/>
+    </select>
+    <insert id="insert">
+        <include refid="insert"/> values(#{id},#{name},#{age},#{status})
+    </insert>
+
+</mapper>

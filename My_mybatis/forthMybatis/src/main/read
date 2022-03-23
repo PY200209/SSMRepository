@@ -1,0 +1,22 @@
+    1) 创建一个与表对应的实体类
+    2) 创建一个Dao接口，并在里面写入需要的方法，需要参数就写参数，多个参数前要加@param，使用对象就用对象，map就用map；
+        返回值可以是简单变量，map也可以是list集合，方法名字要规范化。
+    3) 创建sql映射文件，mapper的namespace要等于Dao接口的全限定名称，sql标签的id要等于Dao接口中方法的名字。
+        获取参数使用#{参数或属性名}，没有逗号;resultType可以为map，简单变量，对象，对象要注意列值和属性值要一一对应。
+        可以自定义列的映射使用resultMap或者使用select  xxx as yy;
+        resultMap id就是这个映射方式的代名词，type就是要获取列值的类，里面的标签为<id>，column表示列名，property表示属性值，一一对应。
+
+        动态SQL：三个标签：<where> <if> <foreach>,if在where里面，where帮助if自动化，if里面的test可直接写参数以及属性，进行判断；
+        foreach 用来遍历list集合或者数组，将里面的数据构成一个String字符串，使用的是StringBuilder。
+            collection是数据类型，item是每个元素的代号，用#{item}引用，open是语句开始符：(，close是语句结束符:)，separator是分隔符：,
+        sql模板: <sql  id>SQL语句</sql>
+    4) 主配置文件： 可以自定义别名  <typeAliases>里面有两种方式: <package name="要扫描的包">会将包中所有类的别名设置为类名。
+                                                         <typeAlias type="全限定名称" alias="别名">
+                  POOLED:连接池；实现了DataSource接口的类都叫做数据源，POOLED是其中之一。
+                        POOLED主要用于创建个管理Connection对象。
+                  设置属性文件xx.properties: 里面可以写一些数据，设置别名，格式:  key=value,通过${key}来获取value。
+                    在使用属性配置文件时要在<Configure>标签里面的第一行写入<properties>标签来引入属性配置文件
+                        里面的参数resource用于指定属性配置文件的位置，从根目录下开始。
+                  还可以引用sql映射文件<mappers>里面有两种方式:
+                    1,<mapper resource="从com目录下开始的路径">
+                    2，<package name="sql映射文件所在的包">会将所有的sql映射文件全部引用
