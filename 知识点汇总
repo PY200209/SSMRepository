@@ -1,0 +1,2120 @@
+1）ctrl+alt+s打开设置按钮，在idea里面可以自行设置根据需要进行修改。
+2）java编程通常都要面对接口编程，为了实现解耦合，类似的 animal a = new dog(),不建议直接使用实现类编程：dog a = new dog();
+    一个实例：
+        写一个方法：public void feed(dog a){};这个方法就这能给dog类使用；
+                  public void feed(animal){};这个方法就面对animal接口，可以给所有实现类使用。
+3）Java.sql*;这个软件包下有许多接口，我们连接数据库使用的接口Connection也来自于这个包。
+4）JDBC就是一套接口，SUN公司制定，所有数据库软件中都有执行类，就是说我们创建一个接口对象就可以了。
+    在要更换数据库类型时不需要重写类，只需要改变一下实现方法（改变一下赋值的实践类）就可以了
+5）各大数据库都会有一个驱动也就是jar包，里面是JDBC的实现类。需要连接那个数据库就去哪个厂家下载哪个数据库的jar包。
+    MySQL的jar包名称：mysql.connector.java-版本-bin.jar.
+6)环境变量的配置就是在ClassPath里面配置相应的变量。就是配置路径。
+7)在idea中配置jdbc：双击模块就是最上面的，点击模块设置（F4），配置 库，添加jar包就可以了，mysql.jdbc的jar包在D盘的develop里面。
+8)快捷键：psvm建立一个main方法。
+9）JDBC编程步骤：首先还要导入java.sql.*;这个类。
+        代码：
+            try{  1，注册驱动：就是告诉java要使用哪个数据库。
+                    我们JDBC的驱动类名为：com.mysql.cj.jdbc.Driver():针对8.0版本的MySQL。
+                    Driver driver = new com.mysql.jdbc.Driver();   第一个Driver是JDBC里面的接口，第二个是MySQL里面写的实现类。
+                    DriverManager.registerDriver(driver)； 这个是JDBC里面的注册驱动的方法：registerDriver位于DriverManger类里。
+                    DriverManager:驱动管理，registerDriver:登记驱动
+                    而类加载会自动执行所加载类的静态方法，所以上述代码可简略为Name(com.mysql.cj.jdbc.Driver);
+                  2，获得连接：就是JVM（Java的虚拟机）和数据库应用程序之间连接，属于进程之间的连接，是重量级，用完一定要关闭。
+                    Connection conn = DriverManger.getConnection(url,id,password)；
+                    conn 是一个连接对象，调用DriverManger里的方法。所以DriverManger这个类很重要，驱动管理。
+                    这个conn就是解耦合的点，因为他是一个接口对象，可以更换实现类。
+                    url:格式：jdbc:mysql://IP地址(我们的为127.0.0.1:3306/)/database(谨记最后的名称为database)，这个是数据库的位置。
+                    name：就是root等，就是那个人像所对应的user。
+                    password：就是我们MySQL的密码。
+                  3，获取数据库操作对象：顾名思义：执行sql语句的，这个对象代替了MySQL软件，让我们在Java中编程sql语句。
+                    Statement stat = conn.creatStatement();
+                    JDBC通过statement这个对象将sql语句传入到数据库中，通过调用connection对象的方法：creatStatement();
+                  4，执行sql语句：主要执行DQL,DML等。
+                    例如：String str = "inser into xxx(xx,xx,xx) values(xx,xx,xx)"就是写一些sql代码insert格式如前面所示。
+                    专门执行DML语句：stat.executeUpdate();
+                        返回值为”影响数据库的次数“.DML：insert delete update;
+                    专门执行DQL(select):stat.executeQuery();
+                        返回值为ResultSet对象。
+                  5，处理查询结果集：当执行select语句时，就会执行此步，也就是查询结果。
+                        ResultSet对象里的方法：
+                            rs.next():返回值为Boolean，若表中下一行存在返回true，不存在返回false；
+                            rs.getString(xx);返回值为String，参数为列的索引或index（1，2，3...列为从一开始）
+                            这些方法一般与if，while等判断标签连用。
+                  6，释放资源：关闭JVM和数据库应用程序之间的通道，不关闭会使计算机出现问题。
+                    释放资源要从小到大依次释放，就是从rs到conn，调用他们的方法：1,rs.close(); 2,statement.close(); 3,conn.close();
+
+10）com是包名，是业界规范，根包名用com。
+11）url就是你所要连接的数据库的位置，id和password就和你的数据库密码保持一致。
+    url：统一资源定位符（网络中某个资源的绝对路径）包括协议，IP，port端口，资源名。
+    例子：http://www.baidu/  ===  http://182.61.200.7：80/index.html（这是写的原始路径 ）
+    http://是通信协议   182.61.200.7是服务器的IP地址  80是服务器上软件的端口  index.html是服务器上的某个资源名
+    协议：就是通信之前提前定好的数据传送格式，就和我们说中国话一样，协议就是计算机的语言。有一样的协议才可以正常通信。
+    http协议的格式：name=value&name=value&name=value.各大浏览器都遵循这个数据传输格式。
+    IP是计算机的代号 端口是软件的代号
+12）delete语句格式：delete from table where name = value;就是通过三个索引：table name value再进行删除。
+13）update语句格式：update table set name = value,name = value where name = value;通过最后的name = value来找到数据进行更新。
+14）类加载：会自动执行类的静态代码块，被static修饰的变量和方法。由于双引号内是一个字符串，所以可以写到配置文件中（xx.properties）。
+    类加载：这种方法不需要接收返回值，因为我们只是为了登记驱动，完成这个动作就可以了，真正的执行是connection和statement
+        class. forName(com.mysql.jdbc.Driver(););使用类加载会自动执行类的静态方法。
+            而registerDriver()就是一个静态方法，所以我们注册驱动时使用：class.forName(Driver).会自动登记（注册）驱动
+15)JDBC查询结果集：要使用ResultSet 这个类,
+    例子：Statement stat = conn.creatStatement();
+        String a = "select *formXxx";select可以重命名：select  xx as yy from xxx;可以在select的时候重命名数据的名称。
+            这个时候按getString(name)查询时就必须按重命名后的name。
+        专门写给DQL的语句。executeQuery返回值就是resultSet对象。
+         ResultSet rs =stat.executeQuery(a);
+         re中的方法：
+            re.Next();返回值是boolean值，作用是将光标向前走一行，光标初始值在第一一行上面上面。下一行有数据为true无数据为false；
+                re.Next();与while连用即while(re.Next())Java中的while会自动判断真值。
+            re.getString(x);取数据的方法，同时不论表中的数据是什么类型都以String的形式取出来！x为表中光标指的行的列表可为数字也可为列名，从1开始，取第一列就是：re.getString(1);
+                建议使用列名，这样改变顺序也不怕。
+            re.getInt(),re.getDouble()等其他类型使用格式和getString()类似。
+16)spring就是一个容器，用来存储对象，核心技术是ioc和aop。
+pom.xml文件最上面的name是创建网站时用的。
+在配置使用spring时首先要在pom.xml文件中改正JDK的版本，改为1.8，其次在dependencies中加入spring的依赖：
+<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.2.5.RELEASE</version>
+</dependency>
+之后再加入编译插件：plugin就是插件的意思。
+ <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+ </plugin>这个插件的作用还是指明我们JDK的版本。这个加不加都一样，因为我们上面已经声明过了我们JDK的版本。
+17)bean的配置，也就是创建一个spring.xml文件，beans是一个对象集合，通过bean来创建对象，bean里面的id就是对象的名称，class就是对象所在类的路径，
+18)在类中通过spring调用类是通过applicationContext容器来调用的，调用格式：ApplicationContext xx = new ClassPathApplicationContext(容器的路径，是从resources下面开始算起的);
+    applicationContext是一个接口，classPathXmlApplicationContext是applicationContext的实现类。
+    在创建容器对象时就自动创建了容器内所有的对象，spring创造对象通过默认无参数构造方法创建，容器对象有自带的API，可以查找容器的属性（对象的个数和名字等）；
+    调用对象用getBean()方法，要写明确对象的类，
+19)在bean中创造对象时，可以直接为对象赋值，这依赖于我们所写类的set方法，spring只能通过我们自己写的方法才能赋值！格式：
+Spring 为对象赋值的方式为di赋值：两种形式：
+    1，set注入（设值注入）：用于类的构造方法为无参的构造方法，spring通过类中的set方法为对象赋值。记住必须要有set方法。
+        通过property标签来为属性赋值，里面有三个参数：name，value和ref：name就是这个属性的名称，value是简单变量的值，ref表示为引用变量赋值
+        格式为：<property name="xxx" value/ref="yy"/>
+    2，构造注入：通过类的构造方法进行赋值，也就是适用于类的构造方法是有参数的，通过<constructor-arg>标签进行赋值；
+        它有四个参数：name，index，value，ref；name就是这个变量的名字，index为变量在构造方法中的位置（0，1，2...），value和ref为值。
+        格式为：<constructor-arg name/index="xx",value/ref="yy"/>
+    20)junit：单元测试，一个工具类库，单元也就是方法，一个单元为一个方法。也就是对方法进行测试。
+测试的方式：通过在方法上面添加注解@Test，且被测试的方法名称为testXXX，方法类型为public void 无参数，被测试的方法可以单独运行，不需要在main里面调用。
+
+21)服务器：就是管理许多计算机的一种计算机，结构和普通计算机类似，主要用于对客户机（PC机，手机，火车管理平台等）进行计算和应用服务。
+Apache：世界上应用最广泛的一种Web服务器，针对Web进行计算和应用服务。
+Maven：是Apache提供的一个项目，是一个Java开发工具，
+作用：1）管理项目并管理项目的生命周期，
+     2）管理项目中的jar包，
+     3）管理项目的基础信息（文档管理，测试报告）。
+构建生命周期：开发（编写代码），编译，打包，发布。
+打包：会将项目中所有的简单的Java工程打成jar包，将所有的简单的Web工程打成war包--->tomcat。
+22)引用参数：引用其他类，就是在一个类中命名其他类的对象，叫做引用。
+23)spring为引用参数赋值，也是通过set方法，首先我们要先创建一个要被引用的对象，然后在property中的ref上写上要引用的对象的名称（会有提示），引用的对象已经赋值过了。
+    只是一个引用。
+24)ioc技术:inversion of control，控制反转技术，是一个思想：类不直接创造被引用对象，而改为调用被引用对象，即对被引用对象失去控制权。
+    ioc通过容器创造被引用对象，通过调用容器来获得被引用对象，实现了控制反转。也就是原本时类给被引用对象写入数据，现在时被引用对象为类提供数据，控制反转。
+    也可以说是被引用对象控制着类里面定义的私有引用对象的实例化，进而控制反转(IOC)。
+    DI:Dependently Insert  依赖注入，IOC依赖容器来定义对象为变量赋值，叫做依赖注入(DI)
+25)耦合：就是我们的实现类和接口类时完全相连的，这就是耦合，而spring的优势就在于解耦合，在beans容器里面我们可以通过ref调换所需要引用的类，前提是有相关的set方法。
+       接口设置多个实现类然后可依赖spring实现解耦合。
+26)powerDesigner:
+    是一个帮助我们建表的软件，通过主页找到Sybase里面的powerDesigner就是我们需要的文件。
+    打开后创建物理模型进行建表。
+    在其页面的右面有建表的图标，点解即可拉到画板里，选中光标图标（在右边）进行操作，建完表后要保存，一个保存powerDesigner项目，一个保存sql语句项目，
+    其中双击表选中physical options进行创建里面有提示，preview用于查看sql语句。
+27)MYSQL终端上的编码格式是GBK;
+28)alt+enter 就是对方法，lei，接口，变量等进行操作。
+29)记住在编写Java时为了代码的整洁性，要求：
+    先在main函数中列出大纲(所需要的方法)，将主要代码放在方法中，让后一一编写，这样就可以再其他类中调用，更方便，更简洁。
+30)数据结构之Map：
+    Map的结构：Map<key的数据类型,数据的数据类型>:尖括号第一个属性是Map的key值的数据类型，第二个属性，是这个key值所对应的值。并不是说是两个值，而是一个是key，一个是值。
+    Map的运用方法：
+        每使用一次map.put("key值","value"),就表示创建一个map对象，可以有无数个map对象，都是通过key值来获取信息。
+        通过map.get("key值")即可获得key对应的数据。
+31)Scanner:Java中创建页面的类，定义格式为Scanner s = Scanner(System.in);就是对屏幕输入的值进行操作。
+    Scanner里的方法：s.nextLine();返回值为String，就是返回这一行用户输入的值。
+32）用户登录案列：
+    三个框架：
+    1)用户登录界面，用户输入，返回值要是用户输入的信息。
+        要获取输入的值就要将输入的值作为返回值，而Map最适合这种模型，Map<string，string>，每个map对象有两个值，可以通过map里的方法获得，
+        即map.get(key)，返回值是string，而获得页面输入的值是通过：scanner a = new (system.in);就是对输入的值进行操作。
+        scanner有个方法叫做a.nextLine();获得一行的值，返回值是String，然后再用map的put的方法来将值输入到map中，map.put("key",value);
+        key在这时候自定义。
+    2)判断信息是否正确。返回值是Boolean值，正确:true,错误：false;
+        首先要将用户信息提取出来，就是用map.get(key)，返回值是String。
+        然后再连接数据库。通过sql语句来进行交互，用if从句来判断rs.next()的值，若正确标记的result=true,错误则返回标记的false。
+    3)最后调用一下第二步返回的结果，采用System.out.println(result?"登陆成功":"登陆失败");
+33)再单引号内引用变量的方式：'"+xx+"';这个格式，在里面添加两个双引号"",再在双引号中添加两个加号++，最后再加号++中写入变量。
+34)JS:JavaScript：Script：脚本，意思就是Java的脚本。JS使网页具有了交换性，变为动态网页。
+    JS虽然里面有Java这个词，但是和Java没有一点关系，只是语法上类似。Java运行在JVM中，JS运行在浏览器的内存中。
+    JS不需要我们使用编译器编译直接在浏览器中打开浏览器会自动编译。
+    像JS 程序储存方式为普通文本的叫做“脚本语言”，也就是文件后缀为.txt。而Java不能使用文本编译器打开，因为文件以.class形式储存了。
+    JS使网景公司发明的，网景公司最著名的是领航者浏览器（navigator浏览器）
+    有两种浏览器脚本语言JavaScript和JScript(微软为IE写的脚本语言)，现在两者都遵循ECMA协议等同为一种。
+35)JSP:隶属于Java语言的技术，在JVM中运行，就这一点差别和JS。
+36)JS是通过事件来驱动的，事件就是进行的操作(像onclick就是点击事件)，而我们再在事件中写书具体方法即可
+    其中每一个事件都有一个事件句柄:click这个事件的事件句柄就是onclick，在事件前加入on就是事件句柄，也就是进行了这个事件的意思，
+    并且事件句柄是以HTML的标签形式存在的。
+    JS代码就是放在事件句柄中的，并且只有在发生事件之后才会执行JS代码。
+37)JS中的对象：
+    1，window:代表浏览器对象，
+        window里的方法：alert("String"):在页面弹出一个窗口并打印里面的信息。每出现一次window.alert("xx")就会弹出一次，可以多次弹出。
+            且window可以省略只需要写：alert("xx");
+        JS中的字符串可以用双引号也可以用单引号，就是'""'或者"''",在事件句柄中。onclick('""'or"''");
+38)JS代码有三种调用方式：1，直接在标签中通过事件调用
+                     2，在<script></script>里写入JS代码。:
+                            在<script></script>中写JS代码在网页打开时会自动从上向下顺序执行。
+                            并且有多个<script></script>时也是从上向下执行。
+                     3，从外部调用JS文件，和css一样可以调用相关文件。：
+                        格式：<script type="text/javascript" src="文件位置"></script>
+                        执行时也是从文件的JS代码从上向下依次执行。
+                        同时一个JS文件可被多次引用.
+                        并且当你从外部引用时你在<script text="xx" src="xxx"></script>中写的代码就无效了。
+39)JS定义变量的方法：
+    var 变量名。赋值时和Java一样。var是可以省略的，直接写 a = 2就可以。
+    由于JS是一种弱类型语言就是定义变量时使用的标签var包含一切变量类型，也就是说可以随意赋值，:var i = 1; i = "abc";不会报错
+        而其它语言（Java，C等）为强类型语言：有具体的数据类型标签，且变量的数据类型已经确定就只能赋予相应的数据类型的值。：int i=0;i="abc";会报错
+40)在JS中变量的可以在方法中调用，就是和Java类似。
+41)可以在JS中自定义函数：需要用到function：
+    两种格式：
+        1，function 函数名(变量列表){方法体}；
+        2，函数名 = function(变量列表){方法体}；
+    注意在function中定义的方法返回值可以是任意类型，当然var就代表任意类型。
+42)tr是行，td是列；所写的格式也就是：
+    <table>
+        <tr>
+            创建第一行
+            <td>创建第一行的第一列</td>
+        </tr>
+    </table>
+43)当你tomcat更换项目是记住更换工件，tomcat会把你的项目打包成war包，利用war包进行运行。
+44)我们创建jsp项目的步骤：
+    1，先新建模块：选择JavaEnterPrise项目，并且项目模板选择Web服务程序，
+    2，jsp文件只能在webapp目录下创建，不能在src目录下创建。
+45)在jsp文件中我们可以写html，css，js以及Java:
+    在jsp文件中写Java命令的标记：
+        1，<%  %>: 用于写 定义变量，运算表达式（a+b=c等），控制语句（if,while等）。
+        2，<%= %>:用于将变量或表达式的值输出到网页上去，输出的结果为变量或表达式的value。(我们可以直接将rs.getString的值用这个输出。)
+        3，当我们需要创建类对象时，一般都需要导入包，使用<%@page import="xxx"%>,我们常见对象时直接alt+回车idea会帮我们导入。
+46)在jsp中会将所有的标记合为一个标记，当成一个整体来看带。:
+    JSP就是融合html和Java代码的一个程序，由于所有的<% %>会被当作一个整体看待，所以可以分许多<% %>，并且将我们需要嵌套在里面的html代码放进去，
+    例如：<% if(5>1){
+                %> <h1>2</h1>
+               <%}else
+                {%><h2>2</h2>
+              <%}%>,这个就是当5>1时显示h1:2否则显示h2:2;
+     这样就是HTML语句和Java代码很好地融合。
+47)tomcat编辑工件最下面的应用程序上下文就是我们网址的名称，和baidu类似。
+48)在tomcat打开我们设置的主网页以后我们可以自己更改路径打开不同网页，就是将文件名更换一下就可以了，也要加上文件类型：.jsp。
+49)Java中有一个数组类：List<数据类型> 变量名称 = new ArrayList();这就是创建了一个关于这个数据类型的数组。
+50)JSP中有内置对象：
+    1.Request：这个对象可以用来获得传输的文件，：方法就是getParameter();
+        之前学习servlet中也有获取参数的内容，表格传输的数据，有个公式：网址?xx=value1&yy=value2;网址就是我们的网页路径，后面是我们传递的参数。
+    2,Session:
+51)类的toString方法就是给类的对象赋值一个String，这个类的对象也就是toString内容的代号。
+52)Spring中引用变量的自动注入；依靠set方法：（自动注入为bean中的一个参数：autowire）
+    1，规则为byName：
+        将要被引用的类的id设置为类中set方法名中的id(setSch1，id就为sch1),设值注入只与set方法有关，而和成员变量没有任何关系。
+        byName就只和set方法名中的id有关，和类无关。
+    2，规则为byType：
+        就是要求被引用对象的类和引用类中set方法内的引用对象是同一种类（也可以是这个类的子类，或者定义变量时用的时接口，则bean中的类可为其实现类），
+        这种就只根据类来赋值。
+        且beans中有多种相同的类时就会报错(同时有类和子类时或者多个实现类也会报错)。
+    3,规则为byConstructor:
+        只要构造方法中有引用变量就会在容器内按byType寻找对应的对象。
+53)我们常说的一个项目中多个模块指的是多个类，一个模块指一个类，也就是一个功能，而不是一个新建模块。
+54)Spring编写多配置文件的目的：
+    1，多个配置文件可明显减小文件的大小，提高文件的运行效率。
+    2，可避免开发大型文件时多人开发所引起的冲突。
+   Spring编写多配置文件的方法：
+    首先要有一个主配置文件：里面不定义对象，而包含其他配置文件，包含的方法：<import resource="其他配置文件的路径"/>
+    resource里有一个关键字：classpath：指的就是其他文件的路径，是从你项目的target文档下面开始。
+    target下有一个classes，而你的所有配置文件和类文件都在classes下面。classpath就从classes下面的文件开始。
+    格式就是：<import resource="classpath=ba01/applicationContext01.xml"/>
+    主配置文件也就是将所有的它包含的配置文件和为了一体，通过指针的形式。
+    除了一个一个包含还可以使用通配符：*来一次性包含所用相关文件。
+        <import resource="classpath=ba01/applicationContext*"/>这个classpath必须要写。
+        *就表示任意字符，也就是说applicationContext01和applicationContext02都可以被一次性包含进去，只要结构相同。
+        在这种情况下主配置文件名称不能与子配置文件名称结构相同，会报错，也就主配置文件不能包含他自己。
+55)按着ctrl点击各种类或者文件会打开打或者显示目录。
+56)注解：
+    注解也是一种类，例如：我们实现接口所用的注解Override;
+    spring注解使用步骤：
+        1，spring的注解需要spring-aop依赖，就是在pom.xml文件中加入依赖。
+            而我们加入spring-context之后各种spring-*依赖都会间接加入到配置文件中，可以在右边的maven中查看自己的依赖。
+        2，在类中加入spring的注解(有许多不同功能的注解)。
+        3，在spring的配置文件中(就是applicationContext.xml等文件)加入组件扫描器标签，说明注解在项目中的位置。
+            组件扫描器：<context:component-scan base-package="你所要扫描的包"/>
+            context是前缀，是声明这个component-scan这个标签来自于哪里，由于spring这个框架很大，可能会有重名的标签，所以设置了这个前缀。
+            在写入<context component-scan: base-package="">以后所在spring配置文件的头内容会改变。
+            可以发现多了几个网络地址(spring-context.xsd就是一个约束文件表明声明的标签所在的地址，防止重名)，那就是这个标签所在的文件
+            component-scan：就是组件扫描器，base-package就是你要扫描的包。
+            component:组件，Java对象就是组件，所以component-scan：就是Java对象扫描器。
+            工作原理：组键扫描器会扫描你提供的包中所有的类，如果类的上面有注解，就对该类执行注解的功能。
+    spring注解：@Component,@Respotory,@Service,@Controller,@Value,@Autowire,@Resource
+57)我们在bean中引用时即使没有创建引用对象可借助idea直接创建，alt+回车，便捷。
+58)我们在创建Maven项目时所选的quickly-start表示普通Java项目。
+59)Servlet：
+    1,Servlet的定义:
+        Servlet就是一个接口，里面定义了许多方法，这些方法也就是相应的规则。
+        是JavaEE中的一套协议(协议就是一个接口，你实现这个接口才能进行操作):
+            1,指定动态资源文件的开发步骤(也就是我们的.class文件)2,指定HTTP服务器调用资源文件的规则 3,指定HTTP服务器管理实例对象的规则。
+        实例对象就是我们Java类中的对象，HTTP将它实例化了。
+            动态资源文件就是实现了Servlet接口的类，静态资源文件（html，css，js等是静态资源文件），
+            HTTP服务器在接受到请求协议包后根据请求地址找到对应的文件，发现是动态资源文件会创建一个类文件实例对象：
+                Servlet接口对象，并将我们写的动态资源实现类(Servlet接口的实现类)赋值给这个对象。并且创建一个request对象和一个response对象。
+                然后会通过调用实例对象的方法处理请求：servlet.doGet();(浏览器的默认信息传递方式为get)
+                并且将方法的返回值以二进制的形式发送到浏览器中。
+    2,Servlet接口实现类(动态资源实现类):
+            1，Servlet接口就是Servlet规范下的一个接口，HTTP服务器中有Servlet的接口;
+            2，tomcat服务器的lib文件下有servlet-api-jar包存放的有Servlet的接口以及Servlet的实现类HttpServlet。
+            3，HTTP服务器（就是Tomcat服务器）只能调用的动态资源实现类,一个类只有实现了Servlet接口才能被称为动态资源实现类。
+                Class student{};不是动态资源实现类，Class Student implements Servlet {};才是一个动态资源实现类。
+                例如：
+                    class teacher extends HttpServlet{
+                        这个就是一个动态资源实现类。HttpServlet是动态资源实现类则他的子类也都是动态资源实现类。
+                        Servlet obj = new teacher();//通过接口创建实例对象。
+                        obj.doGet();//调用实例对象的方法。
+                    }
+            4,创建动态资源实现类的方法：
+                    第一步：
+                        在tomcat的servlet-api-jar中有一个Servlet接口的实现类叫HttpServlet，我们所创建的动态资源实现类就是这个类的子类。
+                        通过继承HttpServlet来使我们写的类也变成动态资源实现类(Servlet接口的实现类)。
+                    第二步：
+                        重写HttpServlet中的doGet()或doPost()方法。
+                        (重写：子类对父类，要求方法结构相同，方法体不同，重载：在一个类中对一个方法名写两种内容，要求方法的变量结构必须不同)
+                        get/post时网页传递参数的两种方式。原本网页传递数据有7种方式:get,post,head,put,delete,option,trace;而现在只使用get和post这两种方法。
+                        由于HTTP服务器调用的是service()方法，没有调用doGet()获得doPost()方法。
+                        所以HttpServlet类的service()方法中就写明了doGet()和doPost()方法的调用时间。
+                        而我们只需重写这两个方法不需要在意他们的调用时间。
+                    第三步：
+                        将我们的动态资源实现类注册到tomcat里面：
+                            方法：
+                                在Webapp文件夹下找到WEB-INF，里面有个web.xml文件也就是我们web网页的配置文件。
+                                在web.xml文件中写入：
+                                    1，设置一个变量存储 动态资源实现类 的类路径。
+                                      <servlet>
+                                            <servlet-name>xxx</servlet-name>//设置一个变量来存储我们动态资源实现类的类路径
+                                            <servlet-class>yyy</servlet-class>//为上面定义的变量赋值，value就是我们动态资源实现类的类路径。
+                                       </servlet>//这一套式子经过tomcat也就是编译为：String  xxx = "yyy";也就是将我们动态资源实现类的类路径存储了起来。
+                                    2，为动态资源实现类的类路径提供一个别名，就是告诉tomcat动态资源实现类的类路径。
+                                        <servlet-mapping>
+                                            <servlet-name>xxx</servlet-name>//之前设置的变量
+                                            <url-pattern>/zzz</url-pattern>
+                                            //为动态资源实现类的类路径设置一个别名，我们通过这个别名在浏览器中找到文件，记住别名的开头要以"/"开始(因为value是路径)。
+                                            //设置别名之后浏览器得到的请求地址就是这个别名，使用类路径是找不到的。
+                                        </servlet-mapping>在网页中就输入: http://localhost:8080/zzz;这个/zzz就是我们的类路径。
+                                   <servlet-name></servlet-name>：这个只用来定义一个变量；
+                                   <url-pattern></ure-pattern>:这个才是简化类路径的标签，只不过它只能通过变量来赋值，所以要先定义一个变量来存储动态资源实现类的类路径
+        3，在Servlet接口中有五个方法:
+            init()方法就是初始化，getServletConfig()方法;service()方法,String getServletInfo()方法;destroy()方法;
+            而我们能用到的就只有service()这个方法，所以不建议直接实现Servlet，而是通过继承已经写好的Servlet实现类HttpServlet。
+            service()这个方法是用来处理需求的。
+            而这个HttpServlet这个类是一个抽象类(abstract抽象)，抽象类的作用就是用于实现接口中的抽象方法，而我们的类只需重写我们需要的方法。
+        4,Servlet对象的生命周期：
+            1，Servlet对象是由Http服务器创建的，即当浏览器发现文件是动态资源实现类时就会自动创建一个Servlet接口对象，并将动态资源实现类赋值给这个对象。
+               我们不能自行创建Servlet对象，只能由HTTP服务器创建。
+            2，我们可以在web.xml文件中定义创造Servlet对象的时间：
+                 <servlet>
+                        <servlet-name>firstServlet</servlet-name>
+                        <servlet-class>com.example.servlet_project.controller.FirstServlet</servlet-class>
+                        <load-on-startup>x</load-on-startup>
+                        //这个x为任意大于0的整数，默认为0。这个就是表明在tomcat启动时就创建这个Servlet对象。
+                    </servlet>
+            3，在Http服务器关闭的时候所有Servlet对象都会被销毁。
+59)ctrl+O:再写子类或者实现类的时候可以使用ctrl+O来选择重写或实现的方法。
+60)我们再写类时要学会去看Java里面写的远吗(就是Java的jar包中写的方法)。
+61)响应体:一个网页的响应体就是它的文件代码。
+61)在doGet()和doPost()方法中有两个参数，一个是HttpServletResponse接口另一个是HttpServletRequest接口参数。
+    HttpServletResponse接口:
+        1,HttpServletResponse接口的实现类是在Http服务器中的，所以我们并不需要去在意这个接口的方法是怎么实现的，只需要知道他的方法有什么用即可。
+        2，HttpServletResponse接口是用来将doGet()和doPost()的执行结果写入到响应体中交给浏览器。
+            (响应体就是网页的文件代码，web网页都是由文件代码(响应体)编译过来的)。
+        3，HttpServletResponse对象被称为响应对象。
+            1)响应对象就是向响应体中传递数据的，也就是从动态资源实现类向网页中传递数据的。
+                可以将响应对象看成网页的响应体，就相当于一个媒介，用于将信息传递给响应体。首先要获得输出流才可以。
+            2)向响应体中传递数据的方式：1,获得tomcat到响应体的输出流(write)：resp.getWrite();
+                                   2,getWriter()这个方法的返回值是PrintWriter的对象: PrintWriter out = resp.getWrite();
+                                   3,将数据放到输出流中，通过PrintWriter中的write()方法: out.write(xxx);
+                                        write()这个方法只能输出：ASCII码，字符，字符串.你如果输入数字的话那就会找到相对应的ASCII码。
+                                        所以输入数字等于输入ASCII码。例如：out.write(97);不会将97传给响应体，而是将97换为a(a的ASCII码等于97)
+                                        因此在实际开发中write()方法并不常用，而PrintWrite的方法中还有一个print()方法可以传递任何类型的数据。
+                                        所以要传递数据应该使用out.print();方法。
+            上述HttpServletResponse对象的方法的实现均有浏览器完成，因为我们只有接口里的方法。所以在不同浏览器调用同一个动态资源实现类会有不同的结果。
+        4，HttpServletResponse接口的功能:
+            1) 将doGet()和doPost()的结果送到响应体中(文件代码中),
+            2) 可以设置响应头[context-type]的值，也就是设置响应体的编码格式：例如：contentType="text/html;charset=UTF-8";同时还要设定characterEncoding("utf-8");
+                浏览器默认的编码格式是文本编译模式，采用文本编译器，只能将对应的二进制代码编译为英文，中文等一些语言，不能编译为Html标签，
+                所以我们要设置响应体的编码模式，采用setContentType="text/html":这编译模式就是即采用文本编译有采用HTML编译。
+                设置好编码模式就可以向响应体中传送HTML标签了。
+                setContextType()这个方法必须在getWrite()方法的上面执行，这样才能为响应体设置编码格式。
+                在它下面设置会使用text文本编译读取setContentType()这个方法，从而无法改变编码格式。
+            3)设置响应头中的[location]属性，将一个请求地址赋值给location，从而控制浏览器向指定地址发送请求。
+                http响应协议包中有响应头和响应体，响应头里面有location参数，当响应体中没有任何信息时(也就是tomcat发送302)
+                浏览器会自动向响应头中的地址发出请求，完成重定向。
+                方法：SendRedirect(location);这时候如果请求被同意就会发生跳转。location就写相应的地址，可以根据tomcat的应用程序上下文来写地址,
+                    如果要重定向的网页不是当前项目下的文件则需要将完整的地址写入里面。
+                    而且由于请求参数是写在请求头中的也就是使用get方法，所以重定向的文件一定要是 get类型。
+                    只需 上下文/文件名(html)或者别名(servlet)，在这个地址中也可以自定义请求参数参数：xxx?y=val1.
+                    这种方式的缺点：需要浏览器自己去重定向，这就导致如果重定向结构复杂，浏览器响应时间会特别长。
+    HttpServletRequest接口:
+        1,HttpServletRequest接口也是在浏览器中实现，不需要管具体的方法体，知道方法的作用就行。
+        2，HttpServletRequest接口负责在doGet()/doPost()方法运=运行时读取相关的Http请求协议包中的信息。
+            (Http请求协议包：里面包含请求三要素：请求地址，请求方式，请求参数，一个网页所做出的跳转就是一个请求，请求对象用于获得请求协议包中的内容)
+        3，通常将HttpServletRequest对象叫做请求对象。
+        4，HttpServletRequest接口的作用：
+            1）获得请求协议包中[请求行]的信息.
+                [请求行]中只有url和请求方式这两个属性。获得url的方法：getRequestURL();获得请求方式的方法：getMethod();
+                也可以获得网页的uri:uri就是url的部分内容，就从tomcat里自定义的应用程序上下文之后的内容。uri就是tomcat中动态资源实现类的定位。
+                    方法：getRequestURI();
+            2)可以读取存储在请求包中的[请求头]信息以及在[请求体]中请求参数信息。
+                获得请求包中请求头中的参数(就是网页通路路径设置的参数)：
+                    getParameterNames();返回值是一个枚举对象。内容是参数的name;
+                    getParameter(参数名称)，返回值是String，就是用来获得指定参数的值。
+                获得请求体中的参数(请求体指的就是表单):获取值和参数名的方法:getParameterNames()和getParameter(xx);
+                解决无法从doPost()方法中获取参数的中文信息的方法：
+                浏览器以GET方法发送请求，参数存储[请求头]（网页的路径后）,在Http协议包到达Http服务器后第一件事就是进行解码;
+                    而请求头二进制内容由tomcat进行编译，默认使用的是UTF-8(可以解释一切国家语言)
+                浏览器以POST方法发送请求时，参数存储在[请求体]中,在Http协议包到达Http服务器后第一件事就是进行解码;
+                    对请求体二进制有当前的请求对象(request)进行编译，默认使用的是[ISO-8859-1]字符集，是专门用来解释东欧语言的。
+                    所以当使用POST方式将参数存于请求体中参数不能为中文。
+                    解决方法：
+                        我们要在request对象编译参数之前通知它使用UTF-8进行编码；
+                        方法：request.setCharacterEncoding("utf-8");
+            3)可以代替浏览器向Http服务器申请资源文件。
+63)Shift加方向键可以用来选中文本。
+64)在浏览器的响应体中只有<br/>这一个换行标签，没有"\n".
+65)网页有两个具体属性：一个是响应体，一个是请求协议包。
+66)超链接的数据传送格式是Get。
+67)枚举：Enumeration :和table相似，只不过没有索引。
+    方法：hasMoreElements();有下一个元素返回true否则返回false。nextElement();返回值不是String所以要加toString()，提取下一个元素的值。
+68)网络协议包:分为请求协议包和相应协议包：
+        请求协议包：里面包含一次请求的三个要素请求地址(url),请求方式(get/post),请求参数。
+            请求地址和请求方式存储在请求协议包的请求行中。
+            Get方法的请求参数存储在请求头中(被tomcat以utf-8的形式编译)，Post方法的请求参数存储在请求体中(默认被请求对象以ISO-8859-1编译)。
+        相应协议包：里面是传递给浏览器的响应体，响应体就是动态资源实现类在浏览器上的呈现。
+            通过响应对象获得tomcat到响应体的输出流，可以对响应体进行编写(PrintWriter对象的print方法),响应体的默认编译方式是文本编译(text)，
+            我们需要设置为"text/html;charset=utf-8"才可正常编译响应体。同时还要设定characterEncoding("utf-8");
+69)表单发送的参数默认是用GBK编码后的值，所以中文无法传递参数.
+70)在连接数据库使用JDBC是，每一个数据库所对应的只能有一个ResultSet对象，不能重复创建，重复创建会是第一个之后创建的全部失效。
+    所以我们需要用到不同表的时候就是将不同的select语句赋给一个ResultSet对象即可，他代表的就是光标。
+71)在重写doPost()和doGet()方法时首先：
+    1,为请求体设置编码格式：setContentType("text/html;charset=utf-8");同时还要设定characterEncoding("utf-8");
+        如果不设置会自动按response对象默认的编码格式编写所有输入到请求体中的信息，
+        且在获得输出流之后在设置编码格式是无效的，因为已经连接上了响应体，等于已经打开了网页，无法再进行修改。
+    2,为请求参数设置编码信息：setCharacterEncoding("utf-8");
+        由于doPost()方法将请求协议包中的参数放在了请求体中，请求体是由请求对象request进行编码的，默认编码格式是ISO-8859-1,专门编码东欧语言的，
+        所以我们要提前告诉request对象要用“utf-8”对请求参数进行编码。
+72)请求对象和响应对象的生命周期：
+    1，在Http服务器接收到浏览器发送的请求协议包后，会自动为请求协议包生成一个请求对象和一个响应对象;
+        我们的动态资源实现类在浏览器中编译显示的流程:
+            浏览器收到一个网页的请求(类似登陆页面的请求)---->创建生成一个Http请求协议包 ---->将Http请求协议包发送给Http服务器(tomcat)
+            ---->tomcat对请求协议包编译，并根据请求地址发现是一个动态资源文件然后根据请求方式生成一个请求对象，一个响应对象
+            ---->调用doGet()方法，并将请求对象和响应对象以实参的形式给到doGet(req，resp)方法---->方法结束后，在这时自动销毁请求对象和响应对象
+            ---->tomcat将doGet()方法的编译结果发送到Http响应协议包中---->浏览器按响应体中设置的编码格式为响应体编码并呈现在浏览器中。
+73)ctrl+shift+alt+u:得到这个类的Java图。
+74)ctrl+h 查看子类。
+75)MySQL的注释符号为#。#号后面的内容是注释
+76)MySQL经过修改它目录下的xml文件现在运行快捷键为F5。
+77)MySQL中auto_increment是修饰主键的，需要主键是int类型，这个命令的作用就是再插入数据时可以不写主键，会执行自动加一功能，这个逐渐一般叫编号。
+    同样我们也可以自行设置编号的值。设置为100就是100了，在运行auto_increment命令时就会从101开始，它实际上就执行了  i++ 语句。
+    即使我们将表中数据全部删除(delete from xxx)auto_increment中存的值也还是101，它不会受到命令的影响。
+78)删除表中的数据：delete from table(表名)。 删除一个表： drop table xxx(表名);
+79)ctrl+shift+r:可以在文本中快速查找内容,可以用它快速查找知识点以及整理知识点。
+80)alter+insert:可以快速生成类的各种方法：set，构造方法等。
+81)在写动态资源实现类(Servlet)时我们要将我们项目要用到的库(jar包)放在WEB-INF下，
+    在它下面创建一个lib包将我们要用到的jar包放在他里面(例如JDBCjar包)并标记为库即可。
+82)form表单可以用来传递各种数据，它的radio标签和其他标签都可以用来传递。
+    而为了美观，我们建议将form表单按table的格式编写：
+        <form>
+            <table><tr><td>lable</td><td>input</td></tr></table>
+        </form>
+83)为了规范：动态资源实现类(Servlet接口实现类)应放在controller目录下(自行创建)。
+84)规范：utils工具包，我们的工具类就放在这个里面。
+85)在Java中加入断点，就是标注为红色，程序就只执行到这一行上面，这一行以及下面的程序都不会继续执行。
+86)SQL注入问题：
+    在select语句中能否查询到结果的条件是以where后面的参数值未查询条件的，这个where也就相当于if，如果后面的参数只在表中存在则返回1，不存在则返回零。
+    所以在这个时候如果将这个where后面的结果变为恒为1的话，无论参数是什么都可以查询到结果。
+    类似：select*from Student where user='xx' or '1'='1';or就表示或者，'1'='1'结果恒为1(true)，也就表示无论'xx'为什么值都可以登陆进去。
+    并且执行：select*from Student.问题就在于用户输入的非法信息也被当作select语句的一部分被DBMS(MySQL服务器)编译了。
+    解决方式：使用户输入的参数不参加select语句的编译。
+    方法：Statement有许多子类即有许多不同功能的Statement，其中有一个为PreparedStatement：预编译数据库操作对象。
+        PrepareStatement：预编译数据库操作对象，即在传递sql语句之前先进行sql语句的编译，
+            且sql语句的格式也要变为"select*from Student where user= ? and password= ? ".
+                这个 ? 是占位符，不能被''单引号引住，这个占位符表示的就是相应的值
+            然后在创建PreparedStatement时调用Connection对象的PrepareStatement(SQL语句);这个方法的参数就是要预编译的SQL语句。
+            这个方法会将SQL语句送到DBMS中进行预编译。
+            然后在执行(传递)SQL语句时:ps.executeUpdate();不需要再写入SQL语句，因为再创建PS对象的时候就已经将SQL语句传递给了PS对象。
+            为占位符?传值：ps.setString(占位符的序号，值);占位符的序号从一开始，第一个?下标就是1，值就是要传递给第一个占位符的值。
+                传值的方式有多种：setString,setInt等等，只不过值要与格式对照。
+87)MySQL在编译程序时如果两个程序的代码完全相同(字母，空格数及位置等)，MySQL就只会编译一次，直接输出结果。
+88)对比Statement和PreparedStatement：
+    1，Statement调用的Connection的方法时createStatement()，PreparedStatement调用的是Connection的PrepareStatement(SQL);
+    2,Statement是一次将SQL语句编译并传递，而PreparedStatement是先编译SQL语句的框架再设值。
+    3，Statement由于每一次传递的SQL语句都不同所以需要编译一次传递一次，而PreparedStatement编译了SQL语句的框架后在传递SQL语句时由于格式都相同，
+        所以只需编译一次就可以了。所以Statement是编译一次执行一次，PreparedStatement是编译一次执行N次。
+    4，Statement是SQL注入方式传值，PreparedStatement是传值(传给占位符).
+    所以PreparedStatement是经常使用的，安全性更高，效率更高。
+    而只有在必须使用SQL注入的时候才会使用Statement对象。:
+    就是要传递特殊命令符时，我们用传值注入的话String类型会加上‘’单引号，而SQL语句中特殊命令符不能加单引号，这样就会报错，这个时候必须使用Statement对象。
+    就是项目必须要进行SQL语句的拼接时就要用Statement对象，而只是传值就可以使用PreparedStatement对象。
+89)MySQL中可以调整升序降序排列：select * from xxx order by xx desc:降序排列;select * from xxx order by xx asc:升序排列;
+        这个的意思就是从xxx中按xx的升序或者降序展示出来表。order by xx: 通过谁的升降序。
+90)JDBC默认的处理方式是执行一条SQL语句提交一条SQL语句而不是将项目整体的SQL语句一起执行，全部正确才能对数据进行修改这是我们的需求。
+    如果执行一条正确进行修改，下一条却错误，不修改那么数据就不对接了。
+    要么全对，要么就不进行数据的修改，这是我们实际开发中的规则。
+    解决方法：运用Connection对象的setAutoCommit(false);:设置自动提交，false就表示不自动提交改为手动提交。
+    手动提交需要在我们代码的最后一行(try里面)写上conn.commit();
+    由于出现异常我们就要在catch里面写上解决方法:调用Connection对象的回滚事务，conn.rollback();
+    总结：
+        我们要解决自动提交问题需要:
+            1，conn.setAutoCommit(false);取消自动提交，在Connection对象创建之后就执行，也成为开启事务。
+            2,conn.commit();手动提交，在try最下方，也称为关闭事务。
+            3,if(conn!=null){
+                    conn.rollback();
+                    }设置异常catch。也成为回滚事务。就是回到conn刚创建之前，即若出现异常则所执行代码全部撤回。
+            这个解决方案只解决单击事务，对多重事务没有作用。
+91)MySQL中的double数据类型的使用： double(x,y);:x表示有效数据位数，y表示小数位数。
+92)idea快捷键：alt+shift+insert:可以进行多行编辑，一次编写多行相同代码。也称为批量编辑。
+93)MySQL中的 事务就是对表进行操作的这一动作(一个用户向另一个用户转账就是一种事务)。
+94)utils工具类的构造方法都是私有的，工具类的方法都是静态的且调用工具类的方法不需要new对象可直接用类名调用。
+    静态方法：就是类的方法，不需要通过对象进行调用，可通过类名进行调用。
+    而当我们将一个类的构造方法私有化就无法new对象，只能通过类名来调用方法。(这是一种编程思想)
+95)创建JDBC工具类：这个工具类用于简化我们写JDBC，不需要再重复写六步。
+          1，注册驱动;由于我们只要调用这个类，就一定会进行累加载，所以我们只需将我们的Class.forName("xxx")放在一个静态代码块里。
+                static{
+                    try{
+                        Class.forName("xxx");这个类加载记住要写在方法内部(main方法或者其他方法)，不然会显示无法编译
+                        }catch(xxx){xxxx};这个静态代码块不在任何方法内，在方法外部写。
+          2，返回Connection对象：写一个方法返回值是Connection,在里面进行数据库的连接就可以了。并且返回这个Connection对象。
+                public static Connection getConnection() throws SQLException{
+                                            //不能用try-catch因为我们是调用这个方法，调用这个方法的类中有try-catch捕获异常，所以我们要抛出异常。
+                                            return DriverManager.getConnection("xx","xx","xx");//上面的静态代码块已经进行过驱动注册了。
+                                            }
+        3，close方法：进行JDBC对象的关闭。
+                public static void  close(Connection conn,PreparedStatement ps,ResultSet rs) throws SQLException{
+                                               判断关闭代码.
+                                               }
+96)MVC架构：是Web的架构，M表示数据    V表示视图(vision)   C表示控制器(control)
+97)软件开发的三层架构：
+    1，界面层：就是与用户打交道的界面叫做界面层，接受用户的请求参数，并做出响应。(html，jsp，servlet(响应体)等。)
+    2，业务逻辑层：用来接收界面层传过来的数据，并对数据进行检查，计算以及调用数据访问层获取数据等service功能。
+    3，数据访问层：也叫做持久层，对应的是dao，与数据库打交道。
+            和JDBC一样，对数据进行增删改查等操作以及将数据库中的信息传递给业务逻辑层以及接受业务逻辑层的数据，将数据存入到数据库中。
+        这三层分别对应的包：
+            界面层：controller包：里面放的主要是servlet;
+            业务逻辑层：service包：里面放的是各种XxxService类;
+            数据访问层：dao包：里面放的是各种XxxDao类。
+        这三层的交互关系：
+                      用户---->界面层--发送请求-->业务逻辑层--向数据库中索要数据-->数据访问层--连接数据库并提取数据-->MySQL
+         将处理结果响应在浏览器上--界面层<--处理数据--业务逻辑层<--将数据送到业务逻辑层--数据访问层<--将数据发送到数据访问层 --
+
+        这三层分对应的框架：
+            界面层---->servlet---->springmvc(接受请求相应处理结果，和servlet一样)
+            业务逻辑层---->service类---->spring(用来管理service类)
+            数据访问层---->dao类(data access object:数据访问对象)---->mybatis(用来代替数据库)
+98)框架：框架就是一套模板可以用来方便我们编写代码，里面有一些功能帮助我们简化代码便于开发。相当于一个半成品软件。
+99)github.com:一个开发人员的交流网站。也算是一个学习网站，用代码交流。
+100)Mybatis:
+    sql映射框架。
+    1)sql mapper：sql映射，mapper有映射的意思。
+        sql映射是将数据库中的一行数据映射为一个对象，操作对象就可以操作相应行中的数据。
+    2)DAOs(data access objects):数据访问，对数据库进行增删改查。
+
+    mybatis具体功能：
+        1，帮助我们创建Connection，Statement，ResultSet对象；
+        2，提供了传递SQL语句的能力，即可以帮助我们执行SQL语句，代替了executeUpdate和executeQuery。
+        3，提供了循环SQL，将SQL语句的结果转为Java对象，List集合的能力(数组)。
+        4，提供了关闭JDBC对象的方法。
+        而我们开发人员要做的只是提供sql语句。
+        总结：提供SQL语句---->mybatis处理SQL语句---->返回一个List集合/Java对象(表中的数据)
+    实现mybatis的步骤：
+        1，创建一个表用于提供数据。
+        2，加入maven的mybatis坐标以及MySQL的驱动坐标。
+            mybatis的坐标，文件在develop中
+            <dependency>
+                  <groupId>org.mybatis</groupId>
+                  <artifactId>mybatis</artifactId>
+                  <version>3.5.9</version>
+                </dependency>
+                mysql的驱动坐标，也就是我们JDBC的jar包
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.28</version>
+              </dependency>
+        3，建一个实体类，保存表的信息。
+            这个类的类名迎合对应的表名一致，类中的属性(成员变量)应和表的列名相同，一行信息对应一个对象。
+            Mybatis就是根据表中的列名来寻找与之相等的成员变量的，如果名称对应一致则将这一行中这一列的信息写入这个对象的成员变量中。
+            且对象的创建是由Mybatis自行创建然后存入到链表里面的。
+        4，创建一个dao(data access object)接口，定义操作数据库的方法。
+            dao接口的接口名应为 表名+Dao。
+        5，创建一个mybatis使用的配置文件：这个sql映射文件的位置应和dao接口在同一目录下且名字与dao接口一致。
+            sql映射文件：写SQL语句的，一般一个表一个sql映射文件，为.xml文件。
+            sql映射文件的类型idea中没有所以要自行创建：创建一个文件,名字是:dao接口名.xml，然后将从简介PPT中拷贝的映射配置文件格式粘上去即可。
+            sql映射文件的格式:
+                <?xml version="1.0" encoding="UTF-8" ?>
+                <!DOCTYPE mapper
+                  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                <mapper namespace="org.mybatis.example.BlogMapper">
+                  <select id="selectBlog" resultType="Blog">
+                    select * from Blog where id = #{id}
+                  </select>
+                </mapper>
+                1)，指定约束文件：
+                    <!DOCTYPE mapper
+                                      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                                      "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                    这行标签的作用就是指定约束文件，约束文件是 mybatis-3-mapper.dtd;约束文件是dtd型。
+                    约束文件就是用来规范代码的，即要求在sql文件内部必须按照指定的规范来写代码，这既是约束文件的作用。
+                2)，<mapper></mapper>是当前文件的根标签,必须的。
+                    namespace:自定义空间(和C++一样，可以自定义但mybatis要求里面应是Dao接口的全限定名称)
+                    全限定名称：你这个Dao接口的类路径，从com下开始。所以这个mapper就对应的是你的Dao接口
+                3),mapper中有执行MySQL语句的特殊标签：select，delete，insert，update。
+                    <select id="selectBlog" resultType="Blog">
+                                        select * from Blog where id = #{id}
+                                      </select>
+                    id就是Dao接口里面所写的方法名，表明这个select标签对应哪个方法。在mybatis中id就是里面的sql语句的代名词。
+                    resultType表明里面所写的select语句的返回值，resultType应写对应类的全限定名称，表示将这个返回结果集存入到这个类中(每一行对应一个对象)。
+                    resultType是自定义的，不要太迂腐。
+                    总结：mapper就代表一个Dao接口，里面的select等标签即对应Dao接口的各种方法，
+        6，创建mybatis的主配置文件：写在根目录下：
+                格式：<?xml version="1.0" encoding="UTF-8" ?>
+                   <!DOCTYPE configuration
+                     PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+                     "http://mybatis.org/dtd/mybatis-3-config.dtd">
+                   <configuration>
+                     <environments default="development">
+                       <environment id="development">
+                         <transactionManager type="JDBC"/>
+                         <dataSource type="POOLED">
+                           <property name="driver" value="${driver}"/>
+                           <property name="url" value="${url}"/>
+                           <property name="username" value="${username}"/>
+                           <property name="password" value="${password}"/>
+                         </dataSource>
+                       </environment>
+                     </environments>
+                     <mappers>
+                       <mapper resource="org/mybatis/example/BlogMapper.xml"/>
+                     </mappers>
+                   </configuration>
+                   主配置文件的作用：定义了数据库的配置信息(注册驱动和连接数据库)(environment)， 存入了sql映射文件的位置(<mappers>)
+                       <configuration></configuration>:根标签;
+                       <environments></environments>：是存放数据库信息的，里面可以有多个<environment></environment>
+                       里面的default是用来指定使用的是哪一个数据库，就是<environment>里的id，通过奉还default的值，来快速更换数据库。
+                       <environment>里的id是这个数据库的唯一标识符，自定义;<transactionManager>:事务管理，type="JDBC";表示使用JDBC的commit和rollback。
+                       <dataSource>:数据源用于连接数据库的，type表示数据源的类型，POOLED表示使用连接池。
+                       而<property>；也就是赋值标签，name是赋值的属性，和JDBC一样，为其赋值即可。
+                       <mappers></mappers>里面存放sql映射文件，<mapper resource>resource就表示这个sql映射文件的类路径，
+                                但在maven中的target目录下不会出现配置文件所以需要加入一个插件在pom.xml中。
+                                    <build>
+                                        <resources>
+                                            <resource>
+                                                <directory>src/main/java</directory><!--这个是配置文件的路径-->
+                                                <includes>
+                                                    <!--包括目录下的.properties和.xml-->
+                                                    <include>**/*.properties</include>
+                                                    <include>xx/*.xml</include>
+                                                </includes>
+                                                <filtering>false</filtering>
+                                            </resource>
+                                        </resources>
+                                    </build>
+                                    这个插件用maven编译过后，执行maven的编译功能在生命周期里面的compile(编译)
+                   总结：需要写的只有dataSource标签里面的东西，也就是连接数据库需要用到的参数。
+        7，创建mybatis类
+            在单元测试或者新建类的main方法中:
+            由于在主配置文件中有数据库的信息以及SQL映射文件的信息(DAO接口)所以只需读取主配置文件即可。
+                1,定义主配置文件的名称，mybatis读取是从根目录下开始的(target)会遍历所有的文件所以只需定义主配置文件的名称即可：
+                        String config="mybatis.xml";主配置文件一般一个就够用了。
+                2，读取主配置文件的信息
+                        InputStream in = Resources.getResourceAsStream(config);
+                3,创建SqlSessionFactoryBuilder对象
+                        SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+                4，创建SqlSessionFactory对象
+                        SqlSessionFactory factory  = builder.build(in);
+                5，创建sqlSession对象
+                        SqlSession sqlSession = factory.openSession();
+                6，以上均为不变的，从下面开始则是每次操作不同的。定义执行语句为sql映射文件的namespace+.+id(sql语句)，也就是 接口名.方法名
+                        String sqlId = "com.bjpowernode.dao.Student1Dao.selectStudent1";
+                7，执行语句，通过sqlSession对象里的方法来执行。
+                        List<Student1> list = sqlSession.selectList(sqlId);
+                        for (Student1 s:list){
+                            System.out.println(s);
+                        }
+101)@component：声明对象的注解。里面有参数:@component(value="这个对象的名称，也就是bean标签的id属性")。在哪个类上面就表示创建哪个类的对象。
+        @component注解的编写格式：
+            1，@component(value="xxx");这种格式叫做value格式，也是标准格式。
+            2，@component("xxx");当注解里面只有一个参数时可以省略value这个前缀，这种叫做省略value格式。
+            3，@component;这个是让spring帮我们命名对象，命名方式是类名首字母小写后的类名(类名：Student,Spring声明的对象就叫做student)。
+                          这种命名格式为spring默认创建对象。
+            其中最常用的是第二种，省略value格式；
+102)当Java类存在idea却表示找不到时，是缓存太多的问题，需要清理缓存并重新启动，在文件这目录下有这个功能。
+103)和@component作用相同的还有其他三个注解：
+        1，@repository:(放在持久层的注解),它注解的类就表示可以连接数据库，是对Dao类进行注解的，用来创建Dao对象。
+        2，@service:(放在服务层的注解),它注解的类就表示是服务层的类，可以进行各种功能操作，用来创建service对象。
+        3，@controller:(是放在控制器上的注解)，它注解的类就表示可以获取浏览器的请求参数并将响应结果展现在浏览器上，也就是用来创建servlet对象。
+        这三种注解的使用格式和@component一模一样,但都有不同的功能：标注不同类的功能，用来划分项目结构的注解：用户页面层，服务层和持久层。
+104)MySQL执行select的结果就叫做查询结果集(resultSet).
+105)ORM:对象关系映射（英语：Object Relational Mapping，简称ORM，或O/RM，或O/R mapping），
+        是一种程序设计技术，用于实现面向对象编程语言里不同类型系统的数据之间的转换。从效果上说，
+        它其实是创建了一个可在编程语言里使用的“虚拟对象数据库”。如今已有很多免费和付费的ORM产品，而有些程序员更倾向于创建自己的ORM工具。
+106)在写项目的时候，要理清结构，Dao类就用来传递数据，Dao类不是一个动态资源文件，里面只写与数据库链接的方法，各种格式不同的insert方法等等，
+    而我们在对数据库进行操作时就只需将数据输入到方法内，由Dao类完成他们的传递。Dao类调用Util工具类快速实现JDBC。
+    而动态资源文件实现类要实现与数据库的交互就直接利用Dao类中的方法就可以了，不需要再重复写代码了。
+    而要用到select方法时，就需要一个实体类对象，里面用来存放信息，一个对象代表一行，List xx = new ArrayList();这个实体类需要用构造方法来赋值(更加方便)。
+    List这个类是一个队列有index(序号)，我们用实体类的List集合来存取一个表，而实体类的List集合中的每一个对象代表一行。
+    通过List类中的add(Xxx)和get(index)方法来写入和获取数据。
+107)Java中的一个重要思想：将大量会重复的代码设置为一个类的方法，通过调用方法来简化代码。(例如：JDBC：utils和Dao)
+108)不需要用户输入的表单信息可以在Dao的方法中直接赋值或者再调用方法的时候不通过请求参数自行写入数据即可。
+109)List 列表类：定义格式：List  Xx = ArrayList();
+    而在获取返回值时一般要加上泛型：List<Xx类>  x = 返回值。(这样List x中的队员就都是统一数据类型，方便我们循环)
+    通过Xx.add(yy);来添加对象，需要注意这个添加的对象可以是任意类型，既可以是类对象也可以是简单数据。存入是有序号的，就是一个队列。
+110)Java中for循环的便捷格式：for(数据类型  变量 : 数组)  :这个表示每一次从数组中提取一个元素为变量赋值。
+    这种方式用在遍历列表队员时很方便。
+111)快捷键：ctrl+alt+l:对代码一键整理，行对齐。
+112)对网页结构快速编辑：
+    标签：<frameset  rows/cols="xx,xx,xx"></frameset>  有<frameset>就不能有<body>两者不共存。
+        两个元素按行(row)划分/按列(col)划分，划分格式在双引号里面每一个逗号代表一个划分，
+        所以可随意划分:<frameset rows="15%,85%">/<frameset cols="60%,30%,10%">
+        frameset里面是<frame name="xx" src="yy"/>标签,name表示这个frame(窗口)的唯一标识符，用于找到这个窗口,src是这个窗口里面的网页。
+113)对表每行直接操作的办法：
+    由于输出表时是按一行一行输出的，所以这是可以设置多个功能对这一行的属性进行操作，附上一个<a>标签用get形式发送即可。
+114)在idea里面可以直接创建servlet实现类。
+115)html网页的路径也可以使用tomcat上下文来进行访问。
+116)tomcat会对用户浏览器发送的请求一一处理，所以有各种请求。
+    默认请求：就是按只写应用程序上下文，没有写明文件地址，这个称谓默认请求，
+    例如：http://localhost:8080/MyFinalProject/，就是一个默认请求。
+    tomcat里面有三个默认网址，当发送默认请求时，会跳转到那三个页面，如果三个默认请求页面均被删除则响应404界面。
+    tomcat默认网址位置在tomcat的conf目录下的web.xml文件的最下方。
+    文件内容：
+        <welcome-file-list>
+            <welcome-file>index.html</welcome-file>
+            <welcome-file>index.htm</welcome-file>
+            <welcome-file>index.jsp</welcome-file>
+        </welcome-file-list>
+
+        在项目中自定义默认欢迎资源文件(默认请求)的方式: 在web下的web-inf的web.xml文件中配置：
+            <welcome-file-list>
+                <welcome-file>默认请求地址</welcome-file>除了是静态资源文件还可是动态资源文件：只需将别名的斜杠/去掉放在<welcome-file>中即可。
+            </welcome-file-list>
+        这个主要是为了降低用户到达网页的难度。
+117)radio：单选框，通过设置几个radio的name相同，但value不同，来实现单项选择，选择哪个radio请求参数name的值就为哪一个的value。
+118)在编写项目时要习惯使用注解。
+    例如：@service就表示这个类有业务处理的能力。@Repository:就表示这个类是Dao类，@Controller:就表示这个一个动态资源实现类。
+    这三个均可以用来创造对象，但作用域不同，而在类没有特定功能时就是用@component.
+119)在Spring中使用注解来定义对象时，可能会需要扫描多个包，有以下三种方式：
+    1，可以使用多个组件扫描器，例如：<context: component-scan base-package="com.MyMode.bao01">
+                               <context: component-scan base-package="com.MyMode.bao02">
+    2,可以使用分隔符在一个组件扫描器中扫描多个包：<context: component-scan base-package="com.MyMode.bao01;com.MyMode.bao02">
+          使用分号;逗号,都可以。
+    3，通过扫描共同父类来扫描多个包。
+        但最好不要是顶级包(com和src等)因为组件扫描器会扫描一个包中的所有子包，扫描顶级包会严重拖慢扫描的效率使项目速度降低。
+        例如：<context: component-scan base-package="com.MyMode">:通过扫描MyMode来一次性扫描bao01和bao02；
+120)IOC:控制反转技术，实际上是为了解耦合。
+        控制反转的意思：被引用对象的创建不需要引用者来创建，而是通过外部的容器来创建。也就是不需要引用者来控制被引用对象了，这就叫控制反转
+        在Java中由于是面对对象编程所以对象与对象之间的联系非常紧密。通常一个对象通过new方法来引用另一个对象，这时想要更换对象就很麻烦。
+        而IOC技术通过在外部容器中创建对象，对象要引用另外一个对象只需设置一个private的变量，通过容器来将另一个对象引用进来，
+        这样两个对象之间就没有直接联系，耦合度降低。
+        (在小项目中还看不出这种结构的耦合度有多么高，但在大型项目中有成千上百个类类之间都有一定的联系耦合度极高)
+        所以就提出了类与类之间建立一个中间站，就是ApplicationContext容器，来降低类与类之间的耦合度，通过调用容器来获得对象，可随意更换类。
+        这就是IOC技术，通过容器调用对象。
+121)DI注入: 在容器中创造的被引用对象，通过注入引用者相应的变量中，来完成引用，被称为依赖注入(DI注入)。依赖注入就是依赖容器注入引用变量。
+122)@Value: 为简单变量赋值，@value 里面的参数是  value 是一个String类型的，也就是说不管变量什么类型都要放在双引号中"";
+    例如： @Value(value="first");  同样由于@Value中只有value这一个参数所以value可以省略：@Value("first");
+    @Value的位置有两个：
+                     1，放在所要赋值的变量的上面即可，无需set方法，可以直接通过映射来赋值。(推荐使用，代码简洁)
+                     2，放在set方法上面进行赋值。
+123)在运用注解时一定要将组件扫描器的包地址写对，要不然会出现许多问题。
+    运用注解创建对象实际上也还是将创建的对象存入到了容器中，还是通过容器来调用对象。
+124)@Autowire:自动引用相应变量，放在引用变量的上面即可(也可放在set方法的上面但多此一举)。
+        @Autowire默认的自动注入方式为byType。
+        如果要使用byName类型，则要在@Autowire和变量之间加入@Qualifier(指定的名称),@Qualifier:就是指定byName的name。qualifier：合格者。
+        在@Autowire中有一个required参数：它是用来控制在spring找不到被引用对象时程序是否执行的。required：必须的。
+        required=true 这时如果找不到被引用对象则程序停止执行；required=false 在被引用对象找不到时会将null注入到引用对象，程序正常执行。
+        最好还是使用required=true，这是程序检错能力更强。
+        引用变量就是IOC控制反转，被引用对象通过容器创建，引用者对他没有控制权力，这就是IOC。
+125)在定义类的时候不要将类的类名和某些特殊值重名了(例如注解的名字)，这样会出现许多问题。
+126)@Resource:是JDK中的一个注解，Spring也支持，所以在Spring中也可使用。
+    @Resource 是为引用变量赋值的，也是自动注入。
+    特点：默认时使用byName方法，且如果byName找不到对应对象，则改使用byType。
+         可以为其设置只使用byName：在里面加入参数name，这是就不按引用变量的变量名来寻找变量了，而使用在name中写入的信息来寻找变量。
+127)请求转发解决方案：
+        原理：为了解决重定向需要浪费大量时间的问题，通过请求对象来代替浏览器向tomcat发送重定向请求，不需要再通过浏览器发送请求，节约了时间。
+        方法：1，创建一个报告对象，用于将重定向地址发送给浏览器：
+                RequestDispatcher report = request.getRequestDispatcher(/重定向的文件名);（括号内就写你要重定向到哪里，根据别名或者文件名）
+             2，将报告对象发送给tomcat(将重定向请求发送给tomcat)
+                report.forward( 请求对象，响应对象);是要做重定向的文件的请求对象和响应对象。
+                也可以简化为： request.getRequestDispatcher(/xx).forward(xx,xx);
+             3,由于使用了forward(请求对象，响应对象)，所以就共用了相同的请求对象和相同的响应对象，也就是说请求协议包和相应协议包时公用的。
+                所以所有servlet均使用一种方法，就是请求协议包中的方法。
+        缺点：
+             1，由于要在一次请求中管理过多的servlet，服务器压力会很大，在后续可以利用分布式系统建立多个服务器，每一个服务器对应一个servlet。
+             2，而且这种方法无法访问其他项目的网页，也就是百度等，只能访问自己当前项目下的文件。实际上是每个服务器(tomcat,每一个项目一个服务器)
+                都只能访问自己网站下的网页。
+128)http服务器：指的是管理项目文件的软件，就是tomcat，但每一个项目都有自己的服务器，每个服务器管理的文件也不相同。
+129)实现servlet之间的数据共享：  实现数据的共享实际上就是寻找能够共享的仓库。
+    要实现共享数据首先要按顺序运行才可以，不难添加共享数据的servlet没被调用，就没有共享数据。
+    1，ServletContext接口：
+        1) 定义：
+            servletContext接口就相当于一个仓库，创建一个servletContext对象就相当于建了一个仓库，可以把想要共享的数据存入里面，
+            而其他的servlet也可以从这个仓库中调取数据。存入数据的形式是Map(变量名，value)，用变量名做key，通过变量名来获取数据。
+            每个网站只能由有一个仓库，方便寻找。ServletContext的实例对象叫做全局作用对象，也就是在震哥哥文件中都可以使用。
+        2) 全局作用域对象的生命周期:
+            在网站的tomcat运行时会自动创建一个全局作用域对象，在tomcat关闭时会自动运行。也就是只要网站运行全局作用对象就一直存在。
+        3) 调用方法：(调用方法有多种，在servlet中就用请求对象获取，在servlet中也可以用this来获取)
+            首先通过请求对象获得tomcat中的全局作用对象(仓库)：
+                ServletContext application = request.getServletContext();规范：全局作用对象的名字就叫做application。
+            然后将要共享的数据放在全局作用对象(仓库)中：
+                application.setAttribute("属性名(key)",数据);
+        4)全局作用对象会占用服务器的运行内存，所以不建议大量地向全局作用对象中传送数据，会使计算机性能下降。所以全局作用对象里面放的只能是关键数据。
+        5)从全局作用对象中获取信息：
+            ServletContext application = request.getServletContext();
+            application.getAttribute("key");
+    2，Cookie:  实际上将Cookie当作一个仓库，每个Servlet可以向里面存入数据，也可以获取数据。
+                浏览器的Cookie在请求协议包的请求头中，在响应协议包中的响应头中。所以只有访问同一个浏览器的才能通过Cookie共享数据。
+                Cookie共享的不是数据，而是共享的一个变量，每一个页面都可以对Cookie中的只进行修改，所以整个Cooike就都是共享资源。
+                共享的是动态资源。
+        方式:
+            第一个Servlet向Cookie中写入数据，并交还给浏览器，而在浏览器向第二个servlet发起请求时就会携带着第一个servlet写的数据，
+            第二个servlet通过读取Cookie的值以此来实现数据的共享。
+        方法：
+            Cookie对象的存值类型也是Map类型，只不过一个Cookie类型只能存取一个键值，即一个数据。
+            1，创建Cookie对象，保存要共享的数据
+                Cookie card = new Cookie("key值",value);一个Cookie对象只能存一个属性，且只能为String类型。所以要共享多个属性则定义多个Cookie对象。
+            2，将共享数据(Cookie对象)存入到响应头中。
+                resp.addCookie(card);每次存一个Cookie对象。
+                浏览器在获得响应协议包时会自动将响应头中的Cookie更新到自己的Cookie里。
+            3，第二个servlet获得共享数据：
+                由于共享数据存在浏览器的Cookie中，而Cookie存在请求头中，所以通过请求对象获得。
+                Cookie cookieArray[] = req.getCookies();获得所有Cookie对象，返回的是一个Cookie数组。每一个Cookie对象代表一个值。
+                for(Cookie card:cookieArray){
+                    String name = card.getName();取得Key值，也就是共享数据的属性名。
+                    String value= card.getValue();获取共享的数据。
+                }
+                若要修改Cookie中共享变量的值，则再建一个Cookie对象，名字相同，值不同，再写入到响应头中Cookie中的变量就会更新了。就是覆盖。
+            4，Cookie的生命周期：
+                在创建Cookie对象并导入到响应协议包中时开始,默认情况下在网站关闭后浏览器会自动清理缓存，Cookie也就被销毁了。
+                但是可以自定义Cookie对象的存活时间：cookie.setMaxAge();以秒为单位，60就代表60秒。
+                需要注意虽说设定了Cookie对象的存活时间，但如果某个servlet对Cookie进行了更新(覆盖)存活时间也会被更新。
+     3，HttpSession：也是Servlet协议下的一个接口，实现类也在tomcat的jar包中，HttpSession的对象被称为会话作用域对象。
+                    会话：指用户和网站之间一次完整的交互，即用户按网站的流程图走一遍就叫一次会话。
+                    网页请求后Tomcat便会为其创造一个session对象，这个对象在浏览器中以Cookie形式存在。
+               定义：
+                    也是相当于一个共享库，但有共享条件--对同一个用户服务(和Cookie一致),和Cookie不同的是Cookie对象存处在浏览器(浏览器缓存或者计算机内存)中，
+                    而HttpSession存储在服务器中和全局作用域对象一样，只不过有访问限制。相当于一个私人保险库。
+                    HttpSession使用的是Map类型，一个会话对象可以存放任意个属性，就用map.put("xx",yy).
+               方法：
+                    1, 从tomcat中获得对应用户的会话作用域对象
+                        HttpSession session = request.getSession();
+                    2, 将需要共享的数据存入到会话作用域对象
+                        session.setAttribute("key值",value);
+                    3, 第二个servlet从会话作用域对象中提取共享数据：
+                        HttpSession session = request.getSession();
+                        session.getAttribute("key值");
+    4，HttpServletRequest：
+            运用请求转发来实现重定向时浏览器只发送一次请求，而这些请求转发连接的servlet共用一个请求协议包和相应协议包，所以就共用一个请求对象和一个响应对象，
+            而请求对象是可以存储数据的，req.setAttribute("key值",value);所以可以用请求对象来实现servlet之间的数据共享。
+            当请求对象用于共享数据时成为请求作用域对象,就相当于一个移动的库。
+            方法：
+                1，将共享数据传入到请求作用域对象中。
+                    req.setAttribute("key",value);
+                2，向tomcat申请请求转发：
+                    req.getRequestDispatcher("/xx").forward(req,resp);
+                3,第二个servlet获取共享信息：
+                    req.getAttribute("key");
+130) String是所有数据类型的根类型，可以转化为其他类型，所以不知道用什么类型时，就用String类型。
+131) 请求协议包中的内容实际上有许多，只不过一个请求最主要的信息是请求地址，请求方式，请求参数。
+132) Java中数字自动转化为字符串的方法：   123+"";只要在数字后面加上一个字符串类型最终的结果就自动转换为字符串类型。
+133) Spring使用配置文件和注解:
+        当所建对象的属性值经常需要更改时，就是用配置文件，因为对象的属性都放在一起，比较好改动，使用注解还需要到每一个类中去修改。
+        注解在创建时方便，配置文件在后续开发中方便，如果只是创建对象建议注解，如果所建对象有各种功能则使用配置文件更方便。
+        但注解是我们发展的方向，一个语言不断发展的过程就是简化代码的过程，注解就是简化代码的利器，所以要会用注解，了解注解。
+        一般来说能用注解就用注解，在不方便的时候才用配置文件。
+134) 在赋值时可以写一个专门存储数值的文件：xx.properties;  属性文件。
+     要想在@Value("${xxx}")应用这种格式，需要在spring配置文件中加入：<context:property-placeholder  location="classpath:xx.properties"/>
+     属性文件中的赋值方式： key = value;左边是key值，右边是value，通过key值来引用value。
+     引用属性配置文件中属性的方式： ${key值};
+135) 代理类:  和原类的方法名一一对应，代理类顾名思义就是代表一个类 的类。
+             即在代理类中有原类所有的方法且方法名一样，并且在方法中调用了原类中相对应的方法，且有额外的功能。
+             就是用来增加原类功能的，但不修改原类的代码，这就叫代理类。(即为了保持原来类中代码的简洁性，而添加的功能和原有类中的功能没有关联)
+             代理类要求结构和原类一摸一样(继承某个类，实现某个结构，方法等)，除了类名以外。
+136) 动态代理：
+        1,定义：
+            动态代理：目标类(被代理的类)是可以动态变化的。
+            就是不需要创建一个类的代理类，对象的代理对象由代理生成工具在程序运行时创建，代理对象和目标对象的代理关系直到程序运行时才确立。
+        2，主要实现方法：
+            1) 通过JDK的Proxy类来实现动态代理，(在java.long.reflect包中有Proxy，Method和InvocationHandler三个类支持代理模式)。
+                JDK的动态代理要求目标对象必须实现接口，这是Java设计上的要求。
+            2) CGLIB动态代理:经常用于代理没有实现接口的类。当然实现接口了也能用。
+                    原理是成为目标类的子类，通过重写目标类中的方法来实现代理增强功能的要求。
+                    由于是通过继承来增强功能的(代理)，所以目标类不能是final的(final所修饰的类和方法不能被继承)。
+        3，流程：
+            创建动态代理的流程：
+            1，创建目标类   为目标类的方法加上输出当前时间的功能
+            2，创建InvocationHandler接口的实现类  通过这个类给我们的目标类增加功能，也就相当于代理类
+                InvocationHandler的实现类便是动态代理类，里面的方法：invoke();就是代理方法。
+                1)创建变量来实现动态代理，通过构造方法赋值不同的对象，来为不同的对象代理。
+                   private Object target;
+                   public MyInvocationHandler(Object target){   this.target = target;}
+                2)通过编写invoke()方法来创建动态代理的模板，三个参数proxy,method,arg。通过method.invoke(target,arg)方法来调用目标对象的方法。
+                    //在执行中method就代表执行的目标方法，可以通过method.getName()来进行验证。执行过程会将目标方法赋值给method。
+                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            //调用Utils工具类中的方法：
+                            util.get_time();
+
+                            //实现目标类的方法是通过Method这个类中的invoke方法实现的
+                            //method.invoke(目标对象，参数)，目标对象就是通过构造方法写入的，参数就是方法中的参数是不变的。
+                            //method.invoke的返回值是Object类型，所以要创建一个Object变量用于返回。
+                            Object a = method.invoke(target,args);
+                            return a;
+                        }
+
+            3，使用JDK中的Proxy类来创建代理对象。  实现创建对象的能力，由于没有对应的目标类的代理类，所以只能间接创建代理对象。
+                     //1,创建目标对象：
+                      first a = new firstImplDL();
+                     //2,创建InvocationHandler对象，并将目标对象赋值到构造方法里
+                         InvocationHandler handler  = new MyInvocationHandler(a);
+                     //3,使用Proxy对象进行代理：使用的是Proxy中的newProxyInstance(目标类的类加载器，目标类实现的接口，代理对象)方法
+                     //类加载器获取方法:对象名称.getClass().getClassLoader(),:通过反射机制获得，这个流程是固定的。
+                     //目标类实现的接口： 对象名称.getClass().getInterfaces()；也是通过反射机制，流程固定。
+                     //代理对象就是handler，也就是动态代理类的对象(InvocationHandler的实现类)
+
+                     //这个proxy的类型必须和目标对象是一致的。
+                         first proxy = (first) Proxy.newProxyInstance(a.getClass().getClassLoader(), a.getClass().getInterfaces(),handler);
+                     //通过代理执行方法，最终的代理是proxy,proxy执行的是代理对象handler的invoke()方法
+                     //proxy就相当于代理方法，通过proxy来选择执行哪一个目标方法的代理方法。
+                         proxy.dosome();
+137) new class()的返回值是一个对象，当不写返回值时，可以不定义对象只调用方法。
+     可以通过 输出 new Date()来快速获得当前时间，就是new一个Date对象然后输出，它的toString是当前时间。
+138) Servlet监听器:
+        1,Servlet监听器是一个接口，存放在servlet-api.jar包，在tomcat的jar包中没有相关的实现类，需要手动实现。
+        2，在servlet-api.jar中总共有八种监听器接口。
+        3，监听器的作用： 用于监控【作用域对象的生命周期变化时刻】以及【作用域对象共享数据的变化时刻】，就相当于"仓库"的"管理员"。
+            就是记录作用域对象被创建和被销毁的时刻，以及记录作用域对象中的共享数据的变化。
+        4，总用于对象只有： ServletContext：全局作用域对象，ServletSession:会话作用域对象，HttpServletRequest:请求作用域对象
+            Cookie存放于浏览器中，作用域对象仅限于服务器之中。
+     扩展：当一个技术的实现步骤只有三步或以内时，这门技术就被称为影响编程效率的技术，而向JDBC这种步骤繁琐的是已经被淘汰的技术。
+        5，监听器接口实现类的开发步骤;
+            1)根据实际情况选择对应的监听器接口：要监听哪一个作用域对象的哪一种内容(3*2);
+            2)重写监听器声明的方法(实现接口的方法);
+            3)在web.xml文件中向tomcat注册监听器实现类(告诉tomcat有这个监听器实现类在监听)。
+139)ServletContextListener接口：
+     1，作用：通过这个接口可以合法的检测全局作用域对象的初始化时刻以及被销毁的时刻;也就是记录其畜生和死亡的时刻。
+     2，监听事件处理方法：要实现的方法;
+         public void contextInitialized(){}: 在全局作用域对象被tomcatHttp服务器初始化后被调用;
+         public void ContextDestroy(){}:在全局作用域对象被tomcatHttp服务器销毁的时刻调用。
+         重写的内容是自定义的；
+    3，在web.xml文件中的声明格式：
+        <listener>
+            <listener-class>监听器的类路径</listener-class>
+     //当tomcat启动时会自动创建根据listener-class里的路径去创建一个监听器的实例对象，并将它与全局作用域对象捆绑在一起。
+       当全局作用域对象被初始化时调用其初始化方法，全局作用域对象被销毁调用其销毁方法；
+       当tomcat启动时全局作用域对象就会被创建，当tomcat服务器关闭时全局作用域对象就会被销毁。
+        <listener>
+140)ServletContextAttributeListener()接口:
+        1,作用：AttributeListener：数据监听器，用于监听共享数据发生新增数据，更新数据，删除数据的时刻。
+            新增数据：就是向作用域对象中加入共享数据            xx.addAttribute("key1",val1);
+            更新数据：更新作用域对象中的共享数据(通过key值)     xx.addAttribute("key1",val2);
+            删除数据：即将作用域对象中的共享数据删除时会调用：   xx.remove("key1");调用删除方法时。
+        2,要实现的方法：
+            public void contextAdd(){};全局作用域对象里的共享数据新增时会自动调用。
+            public void contextReplaced(){};全局作用域对象里的共享数据被更新时会自动调用
+            public void contextRemove(){};全局作用域对象中的共享数据被删除时会自动调用
+        3,再web.xml文件中注册监听器。
+141)再JDBC中连接数据库是最耗费时间的，就是Connection对象的创建。
+142) ServletContextEvent sce: 这是全局作用对象监听方法内的唯一参数，这个参数也就是对全局作用对象操作的。
+     所以在所有的监听方法中监听方法的参数一定可以对作用域对象进行操作。
+143) Map对象也可以直接将所有的key值取出来： map.KeySet();取出来是一个Set集合；
+    然后可以运用迭代器iterator进行排序。 Iterator it = map.KeySet().iterator();等到一个有序的集合。
+144)Set数据结构： 是一个无序列表。
+145) Iterator迭代器：可以对一组无序的元素进行简单的排序(可以根据内存上的地址进行排序)，里面有方法
+        it.hasNext():判断有没有下一个数据；it.next():得到下一个数据
+146)由于Connection对象获取数据库连接用时长，所以可以在全局作用对象中一次建立多个Connection对象。
+    实现步骤： 1,在全局作用域对象初始化监听方法中：创建多个Connection对象，存入到一个map对象中，将map对象存到全局作用域对象中。
+               Map.put("conn","true");将conn对象当作key值存入，后面的val为true时表示该conn对象可用。
+             2,在全局作用对象的销毁监听方法中将map中的conn对象一一销毁：Iterator it = map.KeySet().iterator;
+147)软件设计原则：  在之后的所用项目中都要谨遵7大设计原则。
+     1，开闭原则：保持方法和模块对外扩展开放，对修改关闭：也就是说当要对方法进行修改时不应直接在方法体内修改，而应运用重载进行扩展，来维护系统的稳定性。
+     2，依赖倒置原则： 和IOC相似，都是为了解耦合，这个是为了解决上层模块和下层模块之间的耦合。
+     3，接口隔离原则：就是将不同功能分在不同接口中，不要一个接口里有不同的功能。
+     4，迪米特原则： 就是保持对象与对象之间链接的松散，一个对象不能和过多对象联系紧密。
+148)Filter接口：也成过滤器接口；
+        定义： 在tomcat的servlet-api.jar包下的一个接口，来自于Servlet的规范。
+              Filter的实现类也是通过开发人员自己实现。
+        作用： 1，用于当Http服务器tomcat收到一个请求时，Filter会事先检查请求是否合法，然后再让tomcat进行相关的操作(根据请求地址寻找资源文件等)。
+              2，当请求合法时Filter会对请求进行增强操作。
+        实现接口的步骤：
+              1，创建一个Java类来实现Filter接口。
+                    有许多个Filter接口但是在不同jar包之中，而Servlet只是用Javax目录下的servlet-api.jar里的Filter接口
+              2，重写/实现接口中的doFilter方法。
+                    Filter接口中有三个方法，init，doFilter，destroy;和动态资源实现类一样只需实现所需要的方法，即使doFilter()方法。
+                    doFilter方法中有三个参数：ServletRequest,ServletResponse,FilterChain;
+                        ServletRequest和ServletResponse分别是HttpServletRequest和HttpServletResponse的父接口，就是当tomcat
+                        接到请求创建了请求对象和响应对象后，Filter会将请求对象和响应对象放入到doFilter中进行考察，是否合法。
+                        FilterChain是当Filter确认请求对象和响应对象是合法的以后通过FilterChain对象将请求对象和响应对象在还给tomcat。
+                    判断是否合法是根据项目的逻辑处理，自行编写的。
+                    归还请求对象和响应对象的方法：FilterChain.doFilter(请求对象，响应对象);
+                    当请求不合法时，就在响应体中写入要写的信息即可，tomcat判断请求完成的依据时响应体里面有内容。
+              3，在web.xml文件中将过滤器注册到tomcat中(告诉Tomcat这个Filter的实现类出现，让tomcat在启动时为其创建实例对象)
+                    和servlet通知tomcat一样，两步：
+                        1) 将Filter的地址存入一个变量，是通过变量映射类地址来通知tomcat
+                           <filter>
+                                <filter-name>自定义变量名</filter-name>
+                                <filter-class>filter的类地址</filter-class>
+                           </filter>
+                           <filter-mapper>
+                                <filter-name>对应变量</filter-name>
+                                <url-pattern>所要进行过滤的文件的名字</url-pattern>//一个Filter是指定一个一个文件进行过滤的。
+                                    //在<url-pattern>标签中还可以使用通配符达到一个filter对多个文件进行请求过滤。
+                           </filter-mapper>
+149)在请求行中写(在地址栏)请求参数时记住字符串不加双引号。
+150) web.xml这个配置文件是告诉tomcat在启动时需要做的前提准备(告诉tomcat要创建那些接口的实例化对象：servlet,filter,listener...)
+151) 在JDK的动态代理方法中method就代表了目标类的方法，也就是method实现了解耦合。非常灵活，可以动态更换目标类中要代理的方法。
+152)AOP就是规范化的动态代理，动态代理的方法有许多，AOP指定一套准则，来规范动态代理的写法。
+    AOP也叫面向切面编程，动态代理能干的事他都干。Aspect orient Programming:面向切面编程。
+    切面:就是给目标类增加的功能，面向切面编程就是面向增加功能编程。
+        切面的特点: 可以独立完成的方法，即与业务处理无关的方法。也就是额外的功能，与主功能无关。
+    OOP就是面向对象编程，AOP就是面向切面编程。所以AOP就是更换思想，更换主体。
+    原本是创造不同的对象，用对象的方法与对象间的联系来实现代码；现在就是定义不同的切面(无关方法),用切面之间的关系来解决问题。
+    OOP我的理解：面对对象编程就是，通过创造一个类的对象，就是创造一个类的特殊情况，通过对象调用类中的方法，解决相应的业务问题。
+    OOP和AOP都是在分析项目时所用的不同逻辑，一个在类的层次(通过类实现功能)上解决问题，一个在切面的层次上解决问题(通过切面实现功能)
+153)AOP的流程：
+        1，在分析项目功能时，找出切面。
+        2，分析过后合理地安排切面的执行时间和执行地点，就是在目标方法前执行还是在目标方法后执行，以及在在哪个类地哪个方法增加切面。
+        相关术语：
+            1，Aspect:切面，就是要增加的功能，与业务处理无关的方法。常见的切面类型有：日志，事务，统计信息，参数检查和权限验证。
+                      就是代理方法中增加的方法。
+            2，JoinPoint:连接点，连接业务方法和切面的位置，也就是业务方法，因为切面就是在业务方法上下出现。
+            3，PointCut: 切入点，切入点是连接点的结合，当有多个方法均需要同一个切面时这些方法的集合就叫做切入点，
+            4, 目标对象： 就是一个切面要服务的类，这个类就叫做目标对象。
+            5，Advice：通知，就是某个切面所执行的时间。
+        3,一个切面具体指三个方面：   在考虑切面时具体就考虑这三个方面。
+            1，切面的功能(切面具体有什么作用)(Aspect) 2，切面的执行位置(PointCut)，(在那些切入点处执行) 3，切面执行的时间(advice),在目标方法的前面还是后面
+        4,实现AOP的框架：
+            1，Spring：Spring的以来中本身就有aop，所以Spring是可以实现AOP的，但比较繁琐，很少使用。
+            2，aspectJ：一款开源的专门做AOP的框架，一般做AOP指的就是使用aspectJ。
+        5，使用aspectJ实现AOP的两种方式：
+            1，XML配置文件，不常用，用于配置全局事务。
+            2，注解，一般都使用注解来完成AOP，aspectJ一共有五个注解。(五个注解都是用来通知的，advice)advice可以叫做通知又可以叫做增强
+            3，五个注解：
+                @Before
+                @AfterReturning
+                @Around
+                @AfterThrowing
+                @After
+            4,AspectJ的切点表达式：  后面带?表示可以不写
+                execution(modifier-pattern?ret-type-pattern  declaring-type-pattern?name-pattern(param-pattern)  throw-pattern?)
+                execution:执行，
+                modifier-pattern:访问权限类型，就是public，private这些访问修饰符。可以省略。
+                ret-type-pattern:返回值类型，就是返回值的数据类型。
+                declaring-type-pattern:包名类名，可以不写。
+                name-pattern(param-pattern):方法名(参数名)。
+                throw-pattern:抛出异常类型,可以不写。
+                总结就是将一个方法的命名结构写入到了execution()里面，例如： public boolean  get_num(int) SQLException;
+                在实际开发中只用写返回值(ret-type-pattern)+方法声明(name-pattern)。
+                只有返回值和方法名不可省略。
+154) 三个通配符：
+        1，*: 表示0到多个任意字符  2，.. :用在方法参数中表示任意多个参数(get(..))，用在包后表示当前包和其子包路径
+        3，+ : 用在类名后表示当前类和其子类，用在接口中表示当前接口和其实现类。
+        在使用通配符表示时不同元素之间要用空格分开：(*set*(..))表示中间有set的方法，但没有返回值，(* set*(..))表示任何以set开头的方法，第一个*是返回值。
+        例如：  execution(public * *(..)) 两个*分别是返回值和方法名，表示任意的公共方法。  execution(* set *(..)) 表示任意以set开头的方法。
+        包名类名和方法名使用通配符时的注意点： 包名.类名.方法名(..);三者之间使用 . 来连接。
+        再用通配符表示多级时： com.myWeb.service, com.cn.myTest.service, orc.service;  表示多级中以service为末项: execution(* *..service.*.*(..))
+                            *.. 可以用来表示任意级，com.*..:就表示com下任意级的包。
+155)List ,Map等类型的数据结构记得要分配空间， List list = new Arraylist<>();Map map = new Hashmap<>();
+156)用DI方法为map/list赋值：使用标签<list-set>和<map>在<property></property>里面为list/map的成员赋值。
+157)Spring中在定义对象时可以进行bean之间的继承，通过在<bean>标签里面加入 parent="父类的ID"，就可以继承与父bean变量名相同的值。
+158)@bean这个注解是一个依靠方法定义对象的。
+    例如：  这句话的翻译也就是 <bean id="dosome"  class="School"/>
+         @Bean
+            public School dosome(){
+                School ourschool= new School();
+                ourschool.setName("aaaa");
+                ourschool.setLocation("bbbb");
+                return  ourschool;
+            }
+159)使用aspectJ实现AOP的步骤：
+        1，建立maven项目，并且加入spring，aspectJ，Junit的依赖；
+            aspectJ的依赖：
+                <dependency>
+                      <groupId>org.springframework</groupId>
+                      <artifactId>spring-aspects</artifactId>
+                      <version>5.2.5.RELEASE</version>
+                    </dependency>
+        2，创建目标类，也就是切入点(pointcuts)，就是切面服务的对象；
+        3，创建切面类：也就是切面(要增加的与业务逻辑无关的方法)，
+                步骤：1) 创建一个类，在类的上面加入注解：@Aspect;
+                            @Aspect : 用于切面类的上面，表示该类是一个切面类，@Aspect是AspectJ中的一个注解。
+                     2) 在切面类中定义方法，也即是切面的具体功能,在方法的上面加入通知注解(@Before等)，写上切入点的表达式：execution(xx xx(..));
+                            切面类中的方法(也就是切面的功能)：
+                                1) 必须是public的，
+                                2) 方法名自定义，但方法里面的参数并不能自定义，方法里面的参数是确定的几个类型。方法可以有参数也可以没有参数。
+                            在切面方法的上面加入注解，@Before(value="execution(xxxx)");注解的值也就是切入点的表达式。
+                            切入点表达式中的方法参数只是用来确定参数的类型和个数，不需要写参数名称：execution(void doSome(String,int));
+                            @Before：
+                                加在方法上面表示在目标方法之前执行。且@Before注解的切面的方法体的参数只能是JoinPoint
+                            @AfterReturning：
+                                当目标方法有返回值时使用@AfterReturning,表示在目标方法执行完之后执行。
+                                有两个参数：value(切入点表达式)，returning(自定义的变量); returning里面的对应目标方法的返回值。
+                                被@AfterReturning注解的切面的方法的参数可以有一个自定义的Object参数，用来表达目标方法的返回值。returning中的参数必须和方法中的参数一致；
+                                @AfterReturning(value="execution(xx)",returning="res")
+                                public void getS(JoinPoint js,Object res);上下的returning的参数和下面的参数要对应。
+                            @Around:
+                                环绕通知，这个定义的切面的方法可以有返回值，最好是Object。
+                                环绕通知不仅可以前置通知还可以后置通知，并且可以控制目标方法是否被调用以及修改目标方法的返回值，影响结果。
+                                @Around里只有一个参数： value，里面是切入点表达式。
+                                而下面的方法体中的参数是固定的  ProceedJoinPoint :这个就相当于目标方法。
+                                ProceedJoinPoint继承了JoinPoint，JoinPoint可以做的事，ProceedJoinPoint都可以做。
+                                这个@Around定义的切面的方法就相当于JDK动态代理的Invoke方法，在这里面可以调用目标方法，并且在执行目标方法时就相当于执行这个切面的方法。
+                                ProceedJoinPoint.proceed()就相当于动态代理中method.invoke()方法，返回值也是Object。
+                                也可以根据一些逻辑处理来判断目标方法是否执行，因为执行是在切面方法体中的，所以可以自行控制。
+                                还可以通过拿到目标方法的返回值来对目标方法的返回值进行修改。
+                                @Around主要做的是事务的操作，在目标方法执行之前开启事务，目标方法执行之后关闭事务。
+                            @AfterThrowing:
+                                异常通知，在目标方法抛出异常后执行。
+                                也就是目标方法相当于try，切面的方法相当于catch。
+                                @AfterThrowing(value(execution(xxx)),throwing="ex")
+                                public void xxx(Exception ex);被@AfterThrowing注解的方法可以有两个参数，一个Exception，一个JoinPoint。
+                                其中Exception这个参数的名字必须和throwing这个参数的名字对应。
+                            @After：
+                                这个注解的切面总会被执行无论目标方法执行与否。
+                                里面只有一个参数value，所注解的方法也没有参数，至多是JoinPoint。
+                            @Pointcut;
+                                当有多个通知的切点表达式相同时(切面的切入点相同)，可以使用@Pointcut来简化代码。
+                                使用@Pointcut注解一个类，这个类无需有方法体，只要有一个方法名即可，通过在@Pointcut的value中定义切点表达式，
+                                那么其他的通知就可以使用@Pointcut注解的类的类名，来调用切点表达式。
+                                一般是私有的，当然是什么无所谓，因为也只有当前切面类会进行调用。
+                                @Pointcut(value="execution(xxx)")
+                                private void my(){};   my() = execution(xxx);可以使用my()来代替切点表达式。
+        4，创建spring容器：将对象交给容器统一管理，可以通过xml文件定义对象也可以通过注解定义对象。
+            1) 生命目标对象，2) 声明切面对象，3) 声明aspectJ框架中的自动代理生成器标签，自动代理生成器标签是用来完成代理对象的自动创建功能的。
+                自动代理生成器标签：<aop: aspectj-autoproxy />
+                自动代理生成器标签实际上是将目标方法在内存上的结构改变，将切面方法给加了进去，在内存上目标方法的地址中是切面和目标方法共同融合后的结果。
+                再加入<aop: aspectj-autoproxy>这个标签后idea会自动添加约束项: 没有约束项是无法声明自动代理生成器的。
+                 xmlns:aop="http://www.springframework.org/schema/aop"
+                 http://www.springframework.org/schema/aop
+                 https://www.springframework.org/schema/aop/spring-aop.xsd
+        5，创建单元测试：从容器中提取出目标对象(aspectJ会将目标对象自动转化为代理对象，也就是说aspectJ帮助将切面和目标对象融为了一体)。
+            通过代理对象的代理方法实现AOP的功能增强的能力。
+            从容器中的得到的目标对象实际上是JDK生成的动态代理对象。
+        6，AOP不仅可以用于各种无关方法，切面的方法体可以是任意的，没有任何定性要求，是很随意的，不要被圈套住。
+            切面本身就是对切入点的一个延申(增加额外功能，补全功能)。
+        7，切面方法体的参数类型：
+            JoinPoint：就是切面作用的方法，通过JoinPoint可以获取目标方法的所有信息：
+                .getSignature(): 获取目标方法的签名，签名中有方法的名字，类等信息，签名就是方法的完整定义，(public void com.class.get(..));
+                .getArgs(): 得到目标方法中的所有参数，返回值是Object[]的一个数组，从0开始。
+        8，当目标方法没有接口是aspectJ会使用cglib进行动态代理;
+            如果希望一直使用cglib进行动态代理需要在<aop:aspectj-autoproxy/>标签内加入proxy-target-class="true";
+            即<aop: aspectj-autoproxy proxy-target-class="true"/>即告诉aspectJ要使用cglib进行动态代理。
+160) 根目录resource对应类路径target的classes，再resource下配置的文件会在target的classes目录下显示。
+161) 在使用完Mybatis的sqlSession对象后要进行关闭，也就是关闭所有JDBC对象，通过执行sqlSession.close()可以间接将Connection，PreparedStatement，ResultSet对象关闭。
+162) 将目录标记为根目录的意义： 只有标记为根目录idea才会认为这个目录下时资源配置文件，这样才会编译。
+163) 在maven右边的快捷键中的生命周期里面的clean键点击就会删除所有历史信息，再点击compile就会再编译一次，
+     可以处理idea找不到项目文件的问题。
+     当这种方式无法处理idea找不到项目文件时，可以点击最上方的构建中的重新构建项目试一下，一般idea就可以找到了。
+     第三种方法直接将项目文件粘到target的classes目录下或者清理缓存重新开启idea。
+164) Mybatis在编写insert语句时的规则： insert语句中的values里面的值应该使用#{变量的值/列名},#代表占位符，{xxx}对应所要insert的对象的属性值，
+     Mybatis会根据#{xxx}信息为前面的列进行插入赋值。#{xx}的顺序和前面列名顺序要一致。
+     由于Mybatis的sqlSession对象的insert方法的格式为(sql语句，插入的对象)，他是通过获得对象中与索要插入列名相同的属性名的值，来进行插入的。
+165) Mybatis默认的setAutoCommit()是false的，所以需要去手动提交事务，事务不提交Mysql就无法获得数据，所以执行sqlSession.commit();
+166) Mybatis的主配置文件中有<settings></settings>这个标签是用来设置Mybatis的全局行为的。
+       <setting name="logImpl" value="STDOUT_LOGGING"/>这个是用来控制Mybatis输出日志的。
+167) Pooled:连接池，是用来连接数据库的。
+168) 只有select才需要ResultType。
+169) Mybatis中主要类的介绍：
+        1，Resource类，用于读取主配置文件，InputStream in = Resources.getResourceAsStream(config);
+        2，SqlSessionFactoryBuilder类，用于创建sqlSessionFactory对象。
+           SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder(); SqlSessionFactory factory  = builder.build(in);
+        3，SqlSessionFactory，是一个接口，且是重量级对象(创建该对象耗时长，一般这种对象一个项目只需要一个就够了)，尤其默认实现类，可以用ctrl+h 查看。
+            这个类主要用于创建sqlSession对象，SqlSession sqlSession = factory.openSession();
+            需要注意：factory.openSession()这个方法里面可以带参数，表示setAutoCommit();true就自动提交，默认是false
+        4， SqlSession，是一个接口，里面定义了许多数据库操作的方法，可以了解一下。
+            SqlSession有实现类，可以查一下。
+            SqlSession对象并不是一个线程安全的对象需要再方法内部使用，在执行sql语句之前openSession()获取SqlSession对象，执行完毕后要关闭SqlSession.close();
+            (线程不安全就应在方法中实现，且在用时创建，不需要用时关闭，以免数据丢失)
+170) ctrl+h 可以快速查看一个接口的实现类。
+171) 使用Java配置进行定义对象：
+        @Configuration: 用来定义容器，作用是将一个类定义为容器，可在里面使用@Bean来定义不同对象，被@Configuration注解的类就等同于<beans>一个容器。
+            在创建容器时使用AnnotationConfigApplicationContext(容器的地址(也就是被@Configuration注解的类的地址))。
+            类的地址可以直接用类的名字.class，或者使用类所在的包路径，要从com开始: "com/myMode/Homework_useJava".
+        @Bean: 用来注解方法的，被注解的方法将需要返回值是一个对象，且方法的方法名也将成为定义对象的ID.
+            注意: 方法的返回值是对象，方法里面不要有参数，这个方法就是用来创建对象的，使用@Bean将对象交予容器管理。
+            注意这个@Bean在类中使用时，必须让Spring的容器注意到才可以正常使用，就是说这个@Bean所在的类要被容器调用到(这个类在容器中有对象)。
+            如果@Bean所在的类没用对象在容器中，@Bean就没有作用，Spring的组件扫描器并不会注意到这个注解。
+172) Mybatis中的sqlSession对象的select方法是根据成员对象的名字是否和列名相同，如果相同则将这一列的信息存入到这个成员变量中。
+173) 在IDEA中可以设置文件的模板，可以自定义模板来方便编程，同一种类型的项目只需要使用相同的模板就可以快速写完。
+        在设置里面的编译器中的文件和代码的模板就可以编写，记住后面的扩展名一定要按照文件的格式去写。
+174) 在实际开发中Mybatis的运用还是通过Dao接口实现类的对象来实现，Controller和Service对象还是通过调用Dao对象的方法来执行连接数据库的操作。
+175) SqlSession对象可以自行创建Dao接口的实现类，利用态代理的方式，生成相应Dao接口的实现类，是通过JDK的动态代理来实现的。
+     这就要求Sql映射文件的里的namespace和id一定要和Dao接口的全限定名称和方法名对应。
+     实现方法： sqlSession.getMapper(Dao接口) 例如： sqlSession.getMapper(firstDao.class);
+     底层原理和自行创建Dao接口的实现类是一样的，所以只需要写sql映射文件，写Dao接口，二者对应。
+     通过sqlSession.getMapper(Dao.class)创建实现类对象，通过对象调用方法即可，也不需要提交事务和关闭SqlSession对象。
+176) sql映射文件中的SQL标签里面可设置方法的参数parameterType: 表示Dao接口方法中的参数数据类型。
+        parameterType(数据类型的全限定名称)：parameterType(java.lang.Integer);
+        一般parameterType不要求写，写不写都行。
+        或者也可以写数据类型对应的别名，别名是mybatis自行创建的。可以在Mybatis的PDF文档中查看。
+        Java中所有的数据类型以及相应的Mybatis的别名
+        别名       数据类型
+        byte       byte
+        _long      long
+        _short     short
+        _int        int
+        _integer    int
+        _double     double
+        _float      float
+        _boolean    boolean
+        string      String
+        byte        Byte
+        long        Long
+        short       Short
+        int         Integer
+        integer     Integer
+        double      Double
+        float       Float
+        boolean     Boolean
+        date        Date
+        decimal     BigDecimal
+        bigdecimal  BigDecimal
+        object      Object
+        map         Map
+        hashmap     HashMap
+        list        List
+        arraylist   ArrayList
+        collection  Collection
+        iterator    Iterato
+177) 在Mybatis中传递一个方法的参数  使用#{任意字符(因为是通过方法写入的值，所以是任意的)}
+        更强调了一个ID(标签)对用一个方法。
+178) Mybatis底层使用的是JDBC，为PreparedStatement对象设值时也是使用的get方法，所以对应的实体类中要有set和get方法。这样才能继续进行。
+179) 用Mybatis引用多个参数的方法：
+        1，(推荐使用)通过方法中的参数获取相应的值, @Param(自定义名字);  在Dao接口的方法中的变量的前面写上@Param("xxx")这时就可以靠"xxx"来引用在方法内写入的参数。
+            void get(@param("myID") String id)
+            <select id="xxx" resultType="xxx">
+                select* from first where id=#{myID};  这样就可以引用所写入的值了。
+            </select>
+        2，通过对象来获取相应的值，就是方法参数是一个对象，通过对象的get方法来获取相应的值。这个对象的类应有get和set方法以及一个无参构造方法。
+            完整语法格式： #{属性名，javaType,jdbcType}: javaType就是该属性在java代码中的参数，jdbcType就是该属性在数据库中的数据类型。
+                例如： #{ID,java.long.String,VARCHAR},Java中的数据类型:java.long.String;数据库中的数据类型:VARCHAR
+            常用版： #{属性名} javaType和jdbcType,Mybatis会通过映射得到。
+                这个使用对象里面的值来进行注入，只要#{xx}是这个对象的成员变量就可以进行赋值，变量名和列名相不相同无关，但最好相同。
+        3，通过方法中变量的索引(序号)来进行引用;
+            在一个方法的参数列表中列表从左到右按0，1，2进行排列,所以可以通过：
+              #{arg0}:获取序号为0参数,#{arg1}:获取序号为1的参数。
+              注意：在mybatis-3.3版本之前使用#{0},#{1}来进行引用; 从mybatis-3.4以后使用#{arg0},#{arg1}来进行引用。
+        4，当方法的参数是一个Map对象时，通过Map的KEY来获得对应的值。也就是将要赋予的只存在Map中<key(变量名),value>。
+            通过Map的key来获得对应的值。
+            #{key1}: 获取key1对应的值。就是通过key来获取值。
+           在写参数类型时一般禁止使用Map，因为不清楚一个Map对象有几个键值对，以及相应的数据类型(只给一个Map对象时)，给的信息太少了。
+180) 在Mybatis中#和$之间的区别:
+        在Mybatis调用参数的方法中#{}和${}都可以使用。
+        只不过#{}表示sql语句中的占位符 ?，使用#{}表示使用PreparedStatement进行SQL语句传递。
+        注意：#{}里面不能有双引号""直接就写变量名即可。写双引号会报错。
+        使用${}表示替换符，用来代替sql语句中的值，相当于指针，使用${}表示使用Statement进行SQL语句传递。
+        且使用${}，在调用方法时要注意写入的参数是去掉双引号""写在value的后面了，所以要在双引号内加上单引号'';
+        例如：a.get("'张三'");日志上就显示 where name = '张三';  不加单引号就是: where name = 张三;显然是不对的。
+        大多数情况都是用#{},因为PreparedStatement对象安全性更高。
+181) $的用途：
+        可以用来替换排序的列名(order by ${变量的别名});
+        void get(@param("col_name") String col)
+        select * from first order by ${"col_name"};这是你输入哪个列名就会按哪个列名进行排列。
+182) Mybatis动态代理的基本要求:
+        1，sql映射文件和Dao接口应在同一个目录下;
+        2，sql映射文件的名字要与Dao接口的接口名相同;
+        3，sql映射文件中<mapper>标签的namespace必须等于Dao接口的全限定名称;
+        4，<mapper>标签下的各个SQL标签(select/update/insert/delete)里的ID必须和Dao接口里的方法名相同。
+            由于每个ID是唯一标识符所以要求Dao接口中的方法名也都是唯一标识符。
+183) Mybatis包装输出结果的方式:     resultType和resultMap不能同时存在，互斥，只能二选一。
+        ResultType(""):
+                    1，将输出结果包装成一个对象，只有select标签才有这个属性，用于将提出来的列值(rs.getString("xxx"))存入与列明相同的属性(成员变量)中。
+                    2，ResultType并不一定非要是对象，可以是任意的Java数据类型，但将一行数据存于一个对象中更加方便，且ResultType("")里面的值是别名或者全限定名称。
+                        返回简单变量的例子: select count(*) from first;  resultType=int; 因为返回值是int，所以resultType要写int。
+                        只要查询结果集是一行一列就可以使用简单变量。
+                    3，返回结果是Map;   resultType="map"(这里map是mybatis中的别名)
+                            原理: 将列名和对应的列值存入到一个个键值对中，列名是key，列值是value。
+                            可以直接输出map对象， System.out.println(map); 这是将map中所有的键值对打印出来。
+                            但一个map只能存取一行数据，当ResultType="map"时，因为多行数据时key是相同的。
+        ResultMap：
+                1，在使用resultType时要求对象的属性和列名一一对应，这样才可将列值存入到对用的属性中;
+                    当要使列名和属性不对应也能存入列值时就是用ResultType。
+                2，ResultMap可以自定义列值赋值给哪一个属性(成员变量)、
+                3，使用方式:
+                    1) 定义resultType,就是一种映射类型。
+                        <resultType  id="这个resultType的名称，自定义"   type="对应实体类的全限定名称">
+                            <id column="列名"  property="要将列值赋值的属性(成员变量)"/>  完成自定义。
+                        </resultType>
+                    2) 在select标签中引用resultType。
+                        <select id="xx" resultType="对应resultType的ID">xxxx</select>
+                4，补充： 当列名和属性名不同时的第二种方案:
+                            select id as xxx form first;  可以使用这种SQL语句来将对应的列名送到指定的属性中去。
+184) SQL语句: select count(*) from first;   表示查询first这张表中有几行数据，返回值是一行一列(int当然也可以是其他类型)，就是表中的行数。
+185) 在Mybatis中自定义别名：  推荐使用全限定名称因为更安全，但使用别名也可以。
+        1，在主配置文件中使用标签<typeAlias>定义别名(别名一般用于代替实体类)
+            <typeAliases>
+                <typeAlias type="数据类型的全限定名称",alias="别名"/>
+            </typeAliases>
+        2，在主配置文件中使用<typeAliases>中的<package>标签定义别名(推荐使用，方便)
+            <package name="类所在的包的位置">    <package name="com.myWeb.xxx">
+            原理: 通过定位一个包，进而将包中所有类的类名作为别名(可以使用类名来代替全限定名称)
+        3，定义完别名即可在resultType里面使用别名来代替对应的数据类型。
+186) SQL语句: select name as user from first;  将name列的列名换成user来查询结果。
+187) SQL语句: select *from first where name like "%张%";   查询name里面有张的数据(%是通配符，表示任意字符)
+                like叫做模糊查询，就是查询满足like内条件的数据
+188) 在Mybatis中使用模糊查询:
+        1, (推荐使用，方便)在Java中定义好一个字符串内容是模糊查询的条件，然后将它作为方法的参数，在select中使用#{}获得查询条件。
+                String name="%张%";
+                first.select(name);
+                List<First> select(String name);
+                <select id="xx" resultType="xx">
+                    select *from where name like #{name};
+                </select>
+        2, 在mapper文件中拼接查询条件:  因为要实现动态查询，不能将只设为固定的。
+                <select id="xx" resultType="xx">
+                    select *from where name like "%" #{name} "%";
+                </select>
+                这是不需要写入通配符，只需写入名字就可以了。
+189) 动态sql:   在使用动态sql时，方法的参数要使用对象。
+        1, 定义: sql语句的内容是变化的，可根据不同条件获得不同的sql语句，sql语句变化的主要是where后面的条件。
+        2, 实现方法: 使用Mybatis提供的标签: <if>,<where>,<foreach>
+                1) if:
+                    <if>是用来判断的，语法是：
+                        <if test="判断Java对象的属性值">   test里面可以直接写对象的属性名,也可以写方法的参数。
+                            部分sql语句。
+                        </if>
+                    注意：在if里面的语句要避免语法错误最好按下面的方式写。
+                        where 1=1   //这里是保证where语句不为空
+                        <if test="name!=null and name!=''">   在test里面只能用and表示&，用or表示||;
+                            and name=#{name}    使用and来连接语句，没有and就会造成语法错误。
+                        </if>
+                        <if test="age > 0">
+                            and age=#{age}
+                        </if>
+                2) where:
+                    <where>是用来包含并且自动化<if>的，也就是可以自动为if中的sql语句添加where删除不必要的and，or等。(可以进行删除但不可以自动添加)
+                        select *from first  (不需要写where有where标签就可以了)
+                        <where>
+                            <if test="name!=null & name!=''">
+                                and name=#{name}    使用and来连接语句，没有and就会造成语法错误。
+                            </if>
+                            <if test="age > 0">
+                                and age=#{age}
+                            </if>
+                        </where>
+                3) foreach:    <foreach> 使用可以非常灵活，open，close，separator都可以自行设置。
+                    <foreach>是用来遍历list集合，array数组等数据结构的，用在in('','','')的SQL语句中。
+                    原理:(foreach的底层代码)
+                        写一个SpringBuilder对象builder，写一个List对象list,list.add(2001),list.add(2002);
+                        builder.append("(");
+                        for(int i:list){
+                            builder.append(i).append(",");
+                        }
+                        builder.deleteCharAt(builder.length()-1);
+                        String sql="select*from first where name in"+builder.toString();========select*from first where name in (2001,2002)
+                        这就是Mybatis的<foreach>标签的原理。
+                    使用格式:
+                         1) 循环的成员时基本类型变量
+                            <foreach  collection="" item="" open="" close="" separator="">
+                                1,collection: 用来表示数据的数据结构类型，使array数组就写array，是list集合就用list。
+                                2,item: 用来表示数组或集合中的成员的。
+                                3,open: 是循环开始时的字符。
+                                4,close: 是循环结束时的字符。
+                                5,separate: 是成员之间的分隔符(一般就是逗号,)
+                            <foreach collection="list" item="i" open="(" close=")" separator=",">
+                                #{i}
+                            </foreach>
+                        2) 循环的成员是对象
+                            <foreach collection="list" item="stu" open="(" close=")" separator=",">
+                                #{stu.id}   //获得对象的id属性   这样就可以获得对应的值
+                            </foreach>
+190) SQL语句: 除了有and还有or。
+191) SQL语句: select *from first where name in ('张三','李四','王五');    查找name是'张三','李四','王五'的数据。
+        用于一次查询一个列名的多个值。in()就表示在这个集合内。
+192) 数据结构: StringBuilder,一个字符串数据类型，但功能更强大，StringBuilder对象有许多方法可对其内部的字符串进行操作:
+                1, builder.append("xxx"); 在字符串中添加内容。
+                2, builder.length(); 获取builder的字符串长度。
+                3, builder.deleteCharAt(所要进行删除的数据或操作); 对字符串进行删除。
+                        builder.deleteCharAt(builder.length()-1); 使字符串长度减一，删去最后一个字符。
+193) Mybatis的动态sql代码片段:   可以定义一些常用的sql语句(和定义方法类似), 需要用是通过调用即可。
+        步骤:
+            1, 先定义 <sql id="自定义的唯一标识符">常用的SQL语句</sql>
+            2, 再使用 <include refid=="要调用的sql语句的id"> 可以用<include refid="xx"/>来代替SQL语句。
+            3, 定义的代码片段格式是任意的不需要一定是SQL语句也可以是一些列名等;
+                <sql id="2">
+                    name,age
+                </sql>
+                select <include refid="2">from first;  ====== select name,age from first; 形式是多变的。
+194) Mybatis的主配置文件中的一些内容:
+        1, <settings>标签，里面是设置Mybatis的全局行为的，主要内容在Mybatis的PDF文件中。
+        2, 设置别名: 就是<typeAlias type  alias>和<package name>
+        3, 环境设置 <environment> 设置数据库的连接。
+                <transactionManger  type>:设置Mybatis提交事务和回滚事务的方式。
+                    type: 1) JDBC,使用JDBC的Connection对象的commit和rollback方法;
+                          2) MANAGED 把Mybatis的事务交给处理委托给其他容器管理(Spring或服务器)
+        4, 数据源 <dataSource type>   dataSource 表示数据源，在Java体系中实现javax.sql.DataSource接口的都是数据源。
+                数据源就表示Connection对象，数据源中有返回值是Connection对象的方法。并用Connection对象来连接数据库。
+                所以在<dataSource >这个标签里面会有Driver，url，username，password这些属性。
+                type:
+                    1) POOLED:连接池， Mybatis会自动创建PooledDataSource类，PooledDataSource类是DataSource的实现类。
+                        利用它可以高效地利用Connection对象。
+                    2) UPOOLED(一般不使用):不使用连接池，这时Mybatis每执行一条SQL语句将会创造一个Connection对象，执行完会关闭Connection对象。
+                        Mybatis会创建一个UPooledDataSource对象来管理Connection对象。
+                    3) JNDI: java命名和目录服务(作用和Windows的注册表类似)，就是需要什么服务就在JNDI中找什么服务，比较麻烦，用不到，是很古老的程序。
+        5, Mybatis属性配置文件:
+                   作用: 将主配置文件中的数据库连接信息(<environment>)单独放在一个文件中，这样当要连接多个数据库时就更加方便管理了。
+                   步骤:
+                       1, 在resources目录下创建一个.properties属性配置文件;
+                            文件中的格式:  key=value.
+                               建议key用.来做分级表示，都有一个固定的前缀来进行分类更容易读取。
+                                   例如: jdbc.driver=com.mysql.cj.jdbc.Driver;   jdbc.就表示关于jdbc的。
+                       2, 在主配置文件中的<configuration>标签内使用
+                            <properties  resource="从根目录下开始的文件(如果在根目录的下面则可以直接使用xxx.properties)"/>
+                            且<properties>这个标签必须位于<configuration>最上面。
+                           在对应的地方: 就是dataSource下的<property name="" value="${对应的key}">
+        6, 指定多个mapper文件的方法:
+                1) 写多个<mapper resource="xxxx">;在大型项目中不好用。
+                2) 使用 <package name="mapper文件所在的包">  Mybatis可以一次性读取包中所有的mapper文件。
+                        要求: mapper文件必须和Dao接口的姓名一致且在同一目录下。
+195) SQL语句:查询部分行:  select *from first limit 0,3;  表示查询前三行的信息。
+                            limit x,y; 表示从x行还是取y行。
+196) pageHelper分页插件工具:
+        1，首先加入依赖：
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>5.1.10</version>
+            </dependency>
+        2，在主配置文件中加入插件:  位置必须在<environments>前面,<typeAliases>的后面
+            <plugins>
+                <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+            </plugins>
+        3, 调用PageHelper对象的静态方法: PageHelper.startPage(pageNum,pageSize);pageNum表示从第几页开始，就是1;pageSize表示一页有几行数据。
+            PageHelper的方法在调用传递SQL语句的方法前执行。
+197) 异常类型:
+        XML fragments parsed from previous mappers does not contain value for com.my.Dao.forthDao.forth
+        表示找不到<sql  id>代码片段，也就是说<include refid="">中的refid对应的id找不到，写错了.
+198) 苹果电脑使用的系统是UNIX系统。
+199) DEBUG就是用于调试程序的，用于排除程序故障的，bug:臭虫 DeBug:排除臭虫
+200) Wireshark:  抓包工具，可用于查看一些请求过程中数据(分组)的首部内容。
+201) 使用Spring集成Mybatis：
+        Spring的Ioc技术可以创造对象(通过容器创造对象)，所以可以使用IOC来创造Mybatis中的Dao接口的实例对象。
+            又由于实例对象通过SqlSession对象创建，SqlSession对象又由SqlSessionFactory对象来创建，所以Spring需要创建出SqlSessionFactory对象。
+            而SqlSessionFactory对象的创建又要通过读取主配置文件创造，所以需要创建一个连接池对象(主配置中的连接池)。
+          总结: 创建连接池对象--->创建SqlSessionFactory对象--->创建SqlSession对象--->Dao接口的实例对象。
+                当前使用的只能是<bean>标签创建对象，因为没有源代码无法实现注解创建。
+202) Spring集成Mybatis的步骤：
+        1，加入依赖： spring的依赖，mybatis的依赖，MySQL的驱动，spring的事务依赖，
+                    spring和mybatis集成的依赖(Mybatis官方使用的，用来在Spring中创建SqlSessionFactory对象和Dao接口的实例对象)
+        2，写一个Mybatis项目: 实体类，Dao接口，sql映射文件，主配置文件。
+        3，创建一个service接口和实现类，属性是Dao，用于调用Dao
+        4，创建Spring配置文件声明：将Mybatis的对象统统交给Spring的容器创建。
+            数据源(datasource),sqlSessionFactory,Dao的实例对象，声明service对象
+203) 在spring集成Mybatis时不需要主配置文件中的环境配置，<environments>
+204) 使用druid的具体步骤:
+        1, 在druid的官网拷贝文件，使用的是在spring中创建对象的方式:
+            http://github.com/alibaba/druid/  阿里巴巴的druid连接池的地址
+             在spring中创建datasource对象(数据源对象):  且只要创建了数据源对象相应的Connection对象就也会被创建
+                    //init-method是初始化方法固定的，不需要改     destroy-method是销毁方法也是固定的
+                <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+                    init和close方法都在DruidDataSource这个类里面实现好了。
+                    //这下面是连接方式，连接database
+                    //很明显都是设置注入，set方法。
+                     <property name="url" value="${jdbc_url}" />
+                     <property name="username" value="${jdbc_user}" />
+                     <property name="password" value="${jdbc_password}" />
+                     //一般只需写url，user，password这三项就可以了。
+                    //监听器
+                     <property name="filters" value="stat" />
+                    //最大连接数量(Connection对象的最大数量)
+                     <property name="maxActive" value="20" />
+                     <property name="initialSize" value="1" />
+                     //最大等待时间，单位是毫秒，6000，超过这个时间就表示连接不上数据库。
+                     <property name="maxWait" value="6000" />
+                     <property name="minIdle" value="1" />
+
+                     <property name="timeBetweenEvictionRunsMillis" value="60000" />
+                     <property name="minEvictableIdleTimeMillis" value="300000" />
+
+                     <property name="testWhileIdle" value="true" />
+                     <property name="testOnBorrow" value="false" />
+                     <property name="testOnReturn" value="false" />
+
+                     <property name="poolPreparedStatements" value="true" />
+                     <property name="maxOpenPreparedStatements" value="20" />
+
+                     <property name="asyncInit" value="true" />
+                 </bean>
+205) 集成Mybatis方法：   Mybatis被集成以后会自动帮你提交并且关闭sqlSession对象。
+        1,创建datasource对象(druid)
+        2,创建sqlSessionFactory对象，使用的类是SqlSessionFactoryBean类，用它来创建SqlSessionFactory对象。
+            SqlSessionFactoryBean这个类是Mybatis官网专门为Spring集成Mybatis创建的类。
+                由于SqlSessionFactory对象的创建需要读取主配置文件而当前主配置文件由Durid对象和主配置文件共同组成，所以要分别赋值。
+                    数据源对象的设值注入
+                        <property  name="dataSource" ref="之前定义的数据源">
+                    主配置文件的设值注入，name是configLocation(resource类型)，使用value赋值。
+                     resource不是数据类型但要使用value，是Spring中专门设置用来读取其他文件的类型。
+                      由于要在容器内引用其他文件的地址，所以要使用classPath。
+                        <property name="configLocation" value="classPath:xxx.xml">  classPath的用法和容器创建时类路径方法是一样。
+        3,创建Dao接口的实例对象:
+            在spring容器中创建，不需要id，class是MapperScannerConfigurer类，也是Mybatis官网为Spring集成Mybatis写的类。
+                MapperScannerConfigurer类中会带哦用sqlSession的getMapper()方法。
+                  由于Dao接口的实现类需要sqlSession对象以及Dao接口的地址，所以有两个参数。而sqlSession又是通过sqlSessionFactory来创建的。
+                指定sqlSessionFactory对象的ID，sqlSessionFactoryBeanName是String类型，使用value。
+                    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory对象的ID">
+                指定Dao接口的包名，MapperScannerConfigurer这个类会去扫描指定的包，并生成里面每个接口的实例对象，放在容器中。
+                    生成的是对象的名称是Dao接口的接口名的首字母小写。生成的对象可通过.getBean("实例对象的名称")来获取。
+                    basePackage是String类型。
+                    <property name="basePackage" value="Dao接口所在包的地址">
+206) 快捷键:   .var : 可以自动生成相对应的结果或者方法。
+                List<student> list.var  ======= List<student>  list = service.select();会自动生成service.select();
+207) 在Spring配置文件中引用属性配置文件的方式：
+        <context: property-placeholder location="classpath: 属性配置文件在根路径下的位置">    也是使用${key}
+208) Spring可以集成其他框架，所以在学习到多个框架后，可以将对象统一交给Spring管理，这样就不用一次写多个框架，只需Spring这一个框架就可以了。
+209) Spring处理事务：
+        1，事务的概念:  对于当前  事务就是一次数据库操作，其中这次数据库操作包括多条SQL语句，事务要求多条SQL语句是一个整体，要么全部成功，部分失败全部失败(类似合取)。
+                例如: 银行转账: 一个客户加钱一个客户减钱，两个SQL语句共同构成一次事务。
+        2，有多种事务处理方式，jdbc的处理方式，mybatis的处理方式，hibernate的处理方式(conn.commit/sqlSession.commit/session.commit)
+            使用不同的数据库连接方式会有不同的事务处理方式，这导致在项目中要调用不同的对象进行事务处理。
+        3，Spring提供了能统一事务处理的方案:  通过事务管理器对象代替程序员来完成事物的提交和回滚。
+            事务管理器是一个接口和它的许多实现类，接口: PlatformTransactionManger,定义了commit和rollback方法。
+        4，Spring将不同技术访问数据库定义了不同的事务管理器的实现类，mybatis的实现类是DataSourceTransactionManger。
+            需要做的就是在容器中声明要用到的技术，Spring会根据所选技术进行事务处理。
+                <bean id="mybatis"  class="...DataSourceTransactionManger">这样Spring就知道使用的是Mybatis，会进行相应的事务处理操作
+                    <property name="dataSource" ref="定义的DataSource对象"/>   必要的，声明事务管理器就必须为数据源赋值。
+                 </bean>
+        5，说明事务的类型: 1,事务的隔离级别(多了一个DEFAULT);
+                        2,事务的超时时间:以秒为单位，即一个方法最多执行的时间如果超过自动回滚。是int(整型值)，默认是-1;
+                        3,事务的传播行为: 表示业务方法内是否有事务(多个SQL语句一起执行)，是什么样的事务。
+                            有七个类型(都是常量)  PROPAGATION_XXX (propagation 传播)
+                               常用类型: PROPAGATION_REQUIRED    PROPAGATION_REQUIRES_NEW   PROPAGATION_SUPPORTS
+                               PROPAGATION_MANDATORY   PROPAGATION_NESTED  PROPAGATION_NEVER PROPAGATION_NOT_SUPPORTED
+                            1)PROPAGATION_REQUIRED(默认): 当一个方法被required修饰时，该方法就必须在事务内运行.
+                                分两种情况: 一，调用该方法的地方本身就存在事务，则该方法加入到此事务中;
+                                          二，调用该方法的地方没有事务，则该方法自行创建一个事务。(Spring会帮忙创建事务)
+                                      总结: 就是必须有事务。
+                            2)PROPAGATION_SUPPORTS: 表示该方法可以有事务也可以没有事务.
+                                就是说调用该方法的地方有事务，该方法就加入事务，没有事务也能正常运行(不需要自建事务)
+                            3)PROPAGATION_REPUIRES_NEW: 表示该方法必须新建事务。
+                                如果调用的地方有事务就将该事务挂起(从内存中提出来),没有事务就新建事务。总之必须是新事务。
+        6，Spring提交事务和回滚事务的时机:
+                当事务正常运行，没有异常时就提交事务，调用事务管理器的commit方法;
+                当事务抛出运行时异常(RuntimeException)或者ERROR，就回滚事务，调用事务管理器的rollback方法。
+                当事务抛出非运行时异常，主要是受查异常时，仍会提交事务。
+210) 事务的四大特性分别是：原子性、一致性、隔离性、持久性;
+       注意不同事务可能处理的是同一张表，这就要求了并行的执行顺序。
+        事务处理时可能出现的问题:
+            1,更新丢失: 一个事务正在对表进行更新时，另一个事务也对表进行了插入或者更新这就导致更新结果丢失，不对照。
+            2,脏读: 一个事务在写入数据时另一个事务进行了读操作，使得未提交的数据被读出，这就叫做脏读。
+            3,不可重复读: 一个事务可能需要读取两次表，若第一次读取后，另一个事务进行了更新，这就导致了再一次事务中两次读取的结果不同。不可重复读。
+            4,幻读: 即使设置了可重复读(即在一次事务读取数据的过程中其他事务不可读也不可写)，
+        事务的隔离级别: 就是事物之间不影响的级别(事务独立的级别，一个事物可能会出现其他事务的数据)
+            幻读和不可重复读都是在同一个事务中多次读取了其他事务已经提交的事务的数据导致每次读取的数据不一致;
+                所不同的是不可重复读读取的是同一条数据，而幻读针对的是一批数据整体的统计(比如数据的个数)
+                四个级别主要针对事务在并发执行时可能遇到的问题: 不可重复读，幻读，
+                四个级别:
+                         Read Uncommitted: 即在写的时候不允许其他事务写，但允许其他事务读。不会有更新丢失，会有脏读，不可重复读，幻读。
+                         Read committed(默认): 即在写的时候不允许其他事务读和写。解决了更新丢失和脏读，会出现不可重复读和幻读。
+                         Repeatable read: 要求事务读整个过程中不允许其他事务写(事务有多次读则要求多次读的过程中都不能写)，写的时候其他事务不可读写。可能会有幻读。
+                         Serializable: 要求各个事务按串行执行事务，不允许并行，这样并行的问题就没有了，但效率大大降低。
+        隔离级别的表示: 隔离级别都是用常量来表示的，  开头都是ISOLATION; 格式例如: ISOLATION_READ_COMMITTED(读可提交的常量)
+211) RuntimeException: 运行时异常，表明运行时出现了差错，有许多子类: NullPointException(空指针异常)，NumberFormatException(数字格式化异常)等;
+212) 受查异常: 指的是在写代码时必须要提交的异常，例如:IOException,SQLException。
+213) 在写数据库类型时不能使用float，要用bigDecimal。
+214) SQL语句:  一个技巧:  在对表中某一列进行修改时是很灵活的:  update first set id = id - 10 where name ="张三";
+                                    可以调用原本的只进行逻辑运算。
+215) 自定义异常: 写一个普通类然后继承某个异常类(像RuntimeException这种Exception的直接子类)，重写有参构造和无参构造，用super()返回。
+            例如: public class exce extends RuntimeException{
+                    public exce(){
+                        super();//必须用super()交给父类
+                    }
+                    public exce(String message){
+                        super(message);//message是固定的不要乱改
+                    }
+                }
+216) Spring框架中提供的处理事务的方式:
+        1，适合中小型项目，注解方案。
+            Spring使用aop来为方法增加事务，使用的注解是@Transactional，用于增加事务。
+                @Transactional注解只能用在public的方法上，参数有:事务的隔离级别，传播行为，异常信息等。
+                    使用的步骤:
+                        1) 声明事务管理器对象(不能省略，required,且不同的连接方式对应不同的事务管理对象)
+                            <bean id="xx" class="DataSourceTransactionManager">  由于使用的时Mybatis所以使用DataSourceTransactionManager。
+                                <property name="dataSource" ref="xxx"/>
+                            </bean>
+                        2) 开启事务注解驱动，告诉Spring将要使用注解的方式管理事务。
+                            Spring会自动为@Transactional注解的方法创建代理对象(使用@Around)，给方法加入事务的功能。(Spring会自动创建代理对象，不用写切面)
+                                具体事务: 在方法执行之前开启事务，方法抛出异常或错误回滚事务，方法正常提交事务。
+                            <tx:annotation-driven transaction-manager="上面命名的事务管理器的名称"/>
+                                                                    annotation-driven有四个重名的，一定要选中后缀是tx的(tx表示事务)。
+                        3) 在业务方法上面加入@Transactinal(propagation=Propagation.REQUIRED,
+                                                       isolation=Isolation.DEFAULT,
+                                                       readOnly=false,
+                                                       rollbackFor={自定义的异常名.class})
+                                    Propagation:是一个枚举类，表示事务传播行为，Isolation:表示事务的隔离级别，一般使用Default就可以了。
+                                    由于上面用的都是默认值所以可以直接写:@Transactional就可以了。
+                                        要注意rollback默认时会自动判断方法体内是否是RuntimeException，是则必定回滚。不是就不会滚。
+        2，适合大型项目，在Spring配置文件中配置aspectJ。(这种方式可以保证原代码完全不变)
+            1,加入aspectJ的依赖;
+            2,声明事务管理对象: <bean id="transactionManager" class="DataSourceTransactionManager">;
+            3,生命事务的类型(隔离级别，传播行为，超时);
+                <tx:advice id="自定义" transaction-manager="transactionManager">  要看清advice的后缀是tx，有两个advice另一个是做缓存的cache。
+                    <tx:attributes>   //这个标签是用来设值的，一个父标签，里面是具体方法
+                        <tx:method name="" propagation="" isolation=""  rollback-for="">
+                        //这是事务配的具体方法，为哪一个方法配事务。
+                        //name表示对应方法的名称，只是名称: public void get(){}; name="get"
+                        //name也可使用通配符*表示，有一种遍历级别:name="xx"-->name="x*"-->name="*";遍历顺序从左到右，左边找不到才去右边的寻找。
+                        //propagation传播行为，isolation隔离级别，rollback-for回滚方法
+                    <tx:attributes>
+                </tx:advice>
+            4,配置aop，就是写切入点表达式。
+                <aop:config>
+                    <aop:pointcut id="xx"  expression="execution()"/>  表示配置一个切面，id是切面的名称，expression是切入点表达式。
+                    <aop:advisor advice-ref="引用事务"  pointcut-ref="上面切面的ID">
+                </aop:config>
+217) 通配符的使用技巧: 表示前面有任意包路径:  *..XX      表示后面有任意包路径:  XX..*
+                        表示任意service包和它的子包下的任意类:   *..service..*.*.*(..);
+218) 使用maven配置web项目，选择原型上的maven-archetype-webapp
+219) 在idea自动配置的web.xml文件中版本很低是2.3的，可以手动修改，找到项目结构，找到对应模块的web.xml文件，将其删去(减号-),
+        再添加一个但记住名字要改变:1web.xml(名字直接在路径里面改，生成文件时会有一个路径);
+            应用之后再重构改变名字为web.xml;要按照步骤来。不改名字是没有效果的。
+220) 在form中action可以直接写servlet的别名进行跳转。
+221) 由于request获取的请求参数都是String的，所以要进行转换: Integer.parseInt(xxx)/Integer.valueof(xxx);
+222) 请求转发request.getRequestDispatcher("/文件名.类型").forward(req,resp);无论转发到哪种文件都要有forward(req,resp)。
+223) Tomcat中配置工件也就是在浏览器上发布网站。
+224) 由于在web项目中请求很频繁所以Spring容器不能放在doGet/doPost方法中,要放在全局作用域对象中(selvetContext中)。
+                                            使用监听器在全局作用域对象被创建的时候就创建容器对象这样就可以了。
+225) 使用Spring提供的监听器:
+        1, 加入依赖:
+                <dependency>
+                      <groupId>org.springframework</groupId>
+                      <artifactId>spring-web</artifactId>
+                      <version>5.3.15</version>
+                    </dependency>
+        2, 在web.xml文件中声明监听器;
+            <listener>
+                <listener-class>ContextLoaderListener</listener-class>在这个类中
+            </listener>
+        3, 将Spring配置文件从根目录移到WEB-INF目录下，因为Spring中的监听器定位的是/WEB-INF/applicationContext.xml;这个固定的文件
+                所以文件名称也不能变，就叫做applicationContext.xml。
+           当然也可以进行修改: 在web.xml文件中使用:
+                <context-param>
+                    <param-name>contextConfigLocation</param-name>//表示Spring配置文件的一个变量
+                    <param-value>classpath:</param-value>
+                    //一般Spring配置文件都放在根目录之下，也就是类路径之下(target/classes),可以直接使用classpath:文件名.xml引用。
+                <context-param>
+        4, 监听器已经做的事: 创建容器，并且将容器存入到全局作用域对象中,可以直接调取。
+            Key是webApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE;Key很长但只需输入webApplicationContext,Idea就会有提示。
+             也可以使用Spring中的方法来获取容器对象:
+                    WebApplicationContext xx = WebApplicationContextUtils.getRequiredWebApplicationContext(全局作用域对象);
+226) web项目中创建容器的接口是webApplicationContext。applicationContext用于javaSE中。
+227) <a>标签的href中可以直接写网站名/别名  来导航到动态网页
+228) PageHelper进行分页的操作:
+        1,在pom中添加依赖。
+                <dependency>
+                    <groupId>com.github.pagehelper</groupId>
+                    <artifactId>pagehelper</artifactId>
+                    <version>5.1.10</version>
+                </dependency>
+        2,有三种配置方式:
+            1),在mybatis的主配置文件中配置:      <plugins>  //位置必须在<typeAliases>的下面，<environments>的上面，会提示报错。
+                                                 <plugin interceptor="com.github.pagehelper.PageInterceptor">
+                                                    <property name="helperDialect" value="mysql">
+                                                        //配置属性值，选择哪一种数据库，不选择会自动分析。
+                                                    <property name="reasonable" value="true">
+                                                        //合理化参数，即当传递的分页参数有问题时会自动合理化(pageNum<=0时会自动显示第一页)
+                                                        //有很多属性一般默认即可
+                                                 </plugin>
+                                             </plugins>
+229) 在使用form表单传递参数时就不能使用在地址后面加?xx=xxx了，应该使用<input type="hidden" name="xx" value="xxx">
+230) 用于关于数目有限的的共用资源库的项目:
+        思想: 在每次取资源之前都进行资源数目的判断并且对资源数目进行操作，每次还资源的时候也都对项目数量进行操作。
+            也就是取资源使资源数目减一，并且根据减后的资源数目判断原来的资源数目够不够用，也就是说减完后资源数目<0则表示资源不够，
+                放入到队列中等待，等别人使用完后再用，先欠着。
+            还资源每次资源数目都加一，如果加过之后资源数目<=0，则表示换之前是欠着别人的，就从队列中将队首取出来，将资源交给队首。
+        方法: wait(取资源方法,每次资源数目减一并判断)========使用资源=======signal(归还资源方法,每次资源数目加一)
+231) SQL语句: 两表联查:
+                1,select* from tab_1 LEFT JOIN tab_2 on tab_2.xxx = tab_1.yyy where tab_1.yyy=XX; 查询tab_1中yyy等于XX的行，并且每一行查询tab_2中xxx=yyy的行。
+                    这是两个表一起查询，将两个表的结果融为一体，LEFT表示以前面的表为主表，RIGHT表示以后面的表为主表(主表控制附表的查询)
+                    on后面是附表查询的条件，主表每查询一行就会在附表中按查询逻辑查找相关的行，如果有多行，就显示多行。
+                    (查询的主体还是tab_1,只不过多了tab_2中的列，新的tab_1相当于混合表)
+                2,在Mybatis中实现两表联查，由于查后的表多了额外的列，所以还需要将额外的列名与相关的属性值进行映射。
+                    方法:
+                        1) 直接使用resultMap进行映射, 直接使用<id property="xx" column="xx">进行映射，由于属性值可能设值的是简单变量也可能是引用变量，
+                            引用变量: obj,使用格式为: <id property="ogj.xx" column="xx">,使用obj的属性值。
+                        2) 使用resultMap中的<association>标签，这是专门处理多表联查的标签；
+                            <association property="引用变量" javaType="引用变量的类名">   这就是联查的表
+                                <id property="引用类中的属性"  column="对应的列名">
+                            </association>
+                        3) 而在实际项目中一般使用分步查询，因为连表查询的需求是为了连接两个表，根据一个表中的某个值，来查找另一个表中与该值相等或对应的行。(老师查找本班学生)
+                            所以就先获取特殊值，在引用特殊值查找即可。(所以建表的时候要规范，表与表之间该有的关联要规范)
+                            表与表之间应有共同的标识(一个表的某一列的含义和另一个表的含义一致)
+232) JSP:
+        1，介绍：是JAVAEE中的一种规范，是用来代替响应对象将结果写入到响应体中的，(响应对象写响应体很是麻烦，且效果不好看)，并且制定了Http服务器(tomcat)调用JSP文件的规则。
+        2，作用：可以将在jsp文件中写入的所用内容全部存入到响应体中，不需要out.print();了，更方便。
+                 <%@ page contentType="text/html;charset=utf-8" language="java"%>很明显就是设置响应体的编码格式的，language="java"表示在文件中可以书写java命令。
+        3，如今JSP的替代品是Thymeleaf。
+        4，直接写Java代码会被当做文本内容，必须有特殊的标记告诉Tomcat和浏览器这是一段Java代码:
+            标记:  注意: 在JSP中所有的标记共同构成一个整体，依旧是说上下两个标记实际上是一个整体。
+                1)用于写Java代码，但这个标记内的Java代码不会出现在响应体内。
+                    <%  1，声明变量 2，写表达式(a=b等) 3，写控制语句(循环和判断)  %>   关键点是可以使用判断和循环，这样就极大简略了前端的代码。
+                    同样<% %>里面也可以写各种各样的Java代码，但这些代码都不能出现在响应体中。
+                        例如:<% Stu stu1 = new stu()%>可以定义对象，但是要注意import不需要写在<% %>中，要写在<%@ page import=""%>中，一般直接alt+enter即可。
+                2)用于将Java变量的值放在响应体中，这个标记内的Java代码会出现在响应体中。
+                    <%= Java变量 %>  这个是将变量的值放在响应体中，而不是变量。也可以写表达式:<%= a+b %>会将a+b的值写在响应体中。
+        5，JSP的原理实际就是将没有标记的代码全部放在了out.print("");中，进而将内容全部传入到了响应体中。而被<% %>标记的内容则不用out.print("");包括。
+        6，JSP内有一些内置的Java对象:  都是定义好的对象，可以直接使用对象名来调用方法。
+            1) request(HttpServletRequest对象)，由于servlet是通过请求转发到达相应的JSP文件的，所以共用一个请求对象和响应对象，以及同一个请求协议包和响应协议包。
+            2) session(HttpSession对象)，可以通过会话作用域对象共享数据，存值或者取值。
+            3) application(ServletContext对象)，可以通过全局作用域对象共享数据。
+        7，JSP和Servlet的关系:
+            1) Servlet用于接收请求并且调用Service对象的业务方法，而JSP负责将业务方法的结果响应到浏览器中，由于是通过请求转发到达的JSP文件，所以使用请求作用域对象。
+                流程: 浏览器---->servlet---->service---->jsp---->浏览器
+            2) JSP中可以使用request对象，那就可以进行一切需要进行的操作，再次请求转发都可以。
+        8，Http服务器(tomcat)调用JSP文件的步骤:
+            1) tomcat调用JSP文件后会将JSP文件编辑为一个Servlet接口实现类(动态资源实现类)，是一个.java文件。
+            2) 由于.java文件无法运行所以tomcat会将文件编译为一个.class文件，以便运行文件。
+            3) tomcat会生成这个.class文件的实例对象
+            4) tomcat会调用这个实例对象的service方法，将JSP文件的内容输入到响应体中。
+            这些过程可以通过文档找到，IDEA中的tomcat文件，tomcat会将编译过的文件按时间排列，可以在文件中发现.java和.class文件,也就是在work文件中。
+            5)tomcat只能调用Servlet接口实现类对象(动态资源实现类对象)
+233) GBK是中国人研发的字符集。是一个汉字编码字符集。UTF-8是全世界所有语言都可编码的字符集。
+234) EL技术:
+        1,EL工具包: 是Java项目开发的一个jar包，可以简化JSP的Java代码，并且tomcat也自带了el的jar包，在lib下。
+        2，由于使用JSP就是写响应体，而得到业务处理的结果的方法就是从请求作用域对象中提取，而EL就是对这件事务的包装。(一个技术如果是三步以上就必然会有相关的封装体，也就是更简单的技术)
+        3，EL表达式: ${}: 可以直接在里面写入作用域对象.XXX;: ${applicationScope.id};从全局作用域对象中取出key为id的值并且将值输入到响应体中。
+                          三种作用域对象在EL中的叫法:
+                                application-->applicationScope;session-->sessionScope;request-->requestScope;
+                          可以使用xxxScope.key来获取作用域对象中的数据。
+        4，命令格式的类型: 命令行命令格式: Java的写代码方式; 标签命令格式: Html写代码的方式; 表达式命令格式: EL的写代码方式。
+        5，EL表达式中的作用域对象:
+            1) application applicationScope    2)session sessionScope  3)request requestScope
+            4)PageContext   pageScope 叫做当前页作用域对象，这个作用域对象Servlet中没有，只有JSP中有。
+                PageContext作用域对象不用于JSP文件或Servlet间的数据共享，而用于JSP和JSTL标签之间的数据共享。
+        6，EL表达式的简化版: ${KEY}; 可以省略作用域对象，直接写KEY值。只不过有固定的浏览顺序: pageContext-->request-->session-->application;
+                所以当不同作用域对象中有重名的时候，就按顺序访问，先到那个作用域对象提取哪个作用域中的数据。
+            这种简化版的EL表达式主要用于pageContext作用域对象，很明显pageContext并不受影响。
+        7，EL表达式允许直接在表达式内进行运算: ${key1+key2};直接将结果相应到浏览器中。而且会自动数据类型转换。
+            可以进行数学运算，关系运算(> < ==)  逻辑运算(&& ||)
+            且可以代替if判断，${age>=18?"成年人":"未成年人"}; 使用关系判断式来代替if-else
+        8，EL表达式中的内置对象:
+            1) ${param.请求参数名}; 用于获得请求协议包中的请求参数，并将参数直接响应到浏览器中。
+            2) ${paramValues.请求参数名[下标]}: 用于获取一个请求参数有多个值时中的一个值。下标为1，2，3。
+235) 反射机制是一项必备技能。
+236) 一个请求参数可以关联多个值: http://xxx/xx/xx.jsp?age=10&age=20&age=30    只有age这一个请求参数却又三个值。
+        这时使用: req.getParameterValues("");
+237) 分页也不过是发出请求并且携带者页面参数，任何交互行为都来源于请求，而请求可以有用户完成，更可以有开发人员完成，可以使用a标签自定参数，也可使用表单但不可见(hidden)发送请求
+238) 网页的基础就是 请求，做动态网页，一些交互功能也就是做一些请求，请求可以是请求其他网页，更可以是请求当前网页(请求自己)，从而满足一些跳转。
+        而请求的结果就是响应(JSP)。
+239) SpringMVC:
+        1, 是Spring的一个模块，专门开做Web开发的，底层原理是servlet，使用的模式是Spring的IOC原理。
+        2, SpringMVC通过在容器中创建控制器对象(但这个对象不是Servlet对象，只是一个普通的类的对象)，可以运用<bean>以及@Controller创建，
+            注意: 创建的对象只是一个普通的对象，@Controller赋予了这个对象请求响应的能力，并不是一个Servlet实例对象。
+        3, 由于接收用户请求的只能是Servlet的实例对象，而@Controller所定义的对象并不是Servlet的实例对象，所以不能直接接收请求，
+            而SpringMVC中有一个Servlet的实例对象: DispatcherServlet类，使用这个类的对象来接收请求，再将请求转发给@Controller所定义的对象。
+                DispatcherServlet对象: 叫做中央调度器。与用户直接联系的就是中央调度器;
+                @Controller定义的对象无论是接收请求还是发送响应结果都要依赖于中央调度器。
+        3, SpringMVC的开发步骤:
+                1,创建maven项目(web工程模板)
+                2,加入spring-webmvc的依赖:
+                    <dependency>   加入这个以来会简介加入所有spring所需依赖(相对的)
+                          <groupId>org.springframework</groupId>
+                          <artifactId>spring-webmvc</artifactId>
+                          <version>5.2.5.RELEASE</version>
+                    </dependency>
+                3，在web.xml中注册DispatcherServlet，中央调度器，每一个SpringMVC都必须有一个中央调度器，这是tomcat判断是否使用SpringMVC的标识;
+                    DispatcherServlet负责接受用户请求并转发给其他控制器对象，并将请求结果输送到响应体中。
+                     在web.xml文件中定义中央调度器DispatcherServlet的方式
+                        <servlet>
+                                <servlet-name>springmvc</servlet-name>
+                                <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+                                <init-param>
+                                      contextConfigLocation就是存取配置文件地址的变量
+                                      <param-name>contextConfigLocation</param-name>
+                                      这个是springmvc配置文件的地址
+                                      <param-value>classpath:applicationContext.xml</param-value>
+                                </init-param>
+                                <load-on-start>1</load-on-start>  表示tomcat在启动时创建对象的顺序，1表示第一个，2表示第二个...
+                                    load-on-start:必须写，中央调度器需要首先创建容器才可以完成工作。
+                        </servlet>
+                        <servlet-mapping>
+                            <servlet-name>springmvc</servlet-name>
+                            <url-pattern>*.do</url-pattern>
+                        </servlet-mapping>
+                            在Http服务器tomcat开启时会自动创建中央调度器(DispatcherServlet对象)，
+                        而在中央调度器的初始化方法init()方法会定义springmvc的容器，即将容器中的对象全部创建。
+                        即执行: WebApplicationContext app = new ClassPathXmlApplicationContext("xxx.xml");
+                        并将容器存入全局作用域对象中，和之前的监听器大同小异。
+                            另外tomcat默认是在web/INF目录下寻找springmvc的配置文件，所以需要修改默认地址来提高灵活性。
+                            中央调度器的<url-pattern>是用来表示它所管理的控制器，有两种表示方式:
+                                1) 使用扩展名来表示所管理的控制器: *.扩展名(扩展名自定义一般为:do/action/mvc);
+                                    对应的控制器: some.do;表示该控制器被中央调度器管理。
+                                2) 使用"/": 表示任意的请求均被中央调度器管理，但中央调度器只能处理对动态资源文件的请求。
+                                    静态资源文件被tomcat处理的方式：
+                                            tomcat中有自定义的servlet名称是Default，专门用来处理静态资源文件以及为定向的动态资源请求(JSP)
+                                    处理方式:
+                                        1,在springMVC的容器中加入<mvc:default-servlet-handler />，springMVC会自动创建一个DefaultServlet
+                                            来处理所有的静态资源文件。
+                                            此时还需要加入注解驱动来将动态资源交给与请求地址绑定的方法:
+                                                <mvc: annotation-driven />注解驱动。中和DefaultServlet
+                                        2,使用<mvc: resources mapping="静态资源文件的uri"  location="静态资源的目录位置" />
+                                            例如: <mvc: resources mapping="/html/**"> location="/html/" />
+                                            mapping就是写uri，**表示任意的uri开头为html的文件，
+                                            location就写文件所在位置，/html/就是在html下的所有文件，只需写到目录，不写具体文件
+                                         而通常情况下都将所有的静态资源放在一个统一的目录下,一般为Static目录，这时就只需写一个标签
+                                            <mvc: resources mapping="/Static/**" location="/Static/" />
+                                                将所有静态资源文件全部放在一个目录下可以一次访问全部。
+                                            再加上注解驱动器<mvc: annotation-driven />注解驱动
+                4，创建一个发出请求的界面(.jsp)，对中央调度器管理的控制器发出请求: action="some.do";请求扩展名是.do的文件
+                5，创建一个控制器类，并使用注解定义对象，@Controller不需要写名字，直接写在类的上面即可，
+                6，SpringMVC处理请求的方式:
+                    原理： 一个请求地址对应一个方法，请求相当于请求一个方法(并不是请求控制器)，"some.do"表示请求some.do，
+                    使用注解: @RequestMapping(请求映射)，将一个请求地址和一个方法绑定在一起，请求这个地址就是请求这个方法。
+                            这样做的意义就是一个方法处理一中请求。
+                            @RequestMapping的使用规则:
+                                1) 使用位置: 可以在方法上面(常用)也可以在类上面;
+                                2) 相关属性:
+                                            1,   value,表示对应的请求地址(/uri)，是一个字符串数组。/uri表示请求地址，需要加上/,uri就是请求地址。
+                                               value的值可以是个uri，因为是一个数组，即将多个请求地址与一个方法绑定。
+                                                 value={"/some.do","/watch.do","/make.do"}: 即这三个请求地址全部与同一个方法绑定。
+                                            2,   method:
+                                               用来表示请求的方式:GET/POST.
+                                                 method是RequestMethod类的一个枚举值:
+                                               调用方式: RequestMethod.GET    RequestMethod.POST
+                                3) 方法的返回值:
+                                     1，被@RequestMapping注释的方法返回值 ModelAndView:
+                                        ModelAndView是框架中的一个类，专门用于表示请求的结果的。
+                                        Model: 表示数据，即业务对象处理的结果;
+                                        View: 表示视图，也就是响应给用户的界面(jsp等)。
+                                        整个ModelAndView就表示请求处理的结果。
+                                     2，返回值是 String：
+                                         String就代表了视图的路径，在设置有视图解析器时，String只需写视图的名称，没有视图解析器则要写完整路径。
+                                         SpringMVC会将String字符串拼接完毕后交给getRequestDispatcher()方法，进行请求转发。
+                                4) 方法的形参:
+                                    SpringMVC的请求由具体方法处理，那就必须能够处理请求参数。
+                                        1，形参可以是: HttpServletRequest  HttpServletResponse  HttpServletSession等;
+                                    需要做的就是在形参列表中定义需要的对象，而SpringMVC会在调用方法时自动为形参赋值。
+                                        2，形参还可以是用户提交的数据(提交了name/password等):
+                                    SpringMVC通过DispatcherServlet中央调度器调用方法时，会通过request.getParameter("xx")将用户
+                                    提交的数据赋给方法中同名的形参，即将用户提交的数据赋给了同名的形参。(前提名字必须相同)
+                                    当然也可以自定义赋值，和Mybatis中resultMap类似，在参数前加@RequestParam("提交的参数")。
+                                    @RequestParam(value="提交的参数",required="")  required是boolean类型的。默认为true。
+                                        required表示这个参数是必须的，不可为空(null),为空就会报错。
+                                    当提交的参数过多时就不能使用写列举形参的方式，可以使用对象存储。
+                                    就是使用一个实体类存储所有提交的参数，形参列表中只需定义一个实例对象即可，SpringMVC会将提交的参数赋值给
+                                    实例对象中对应的属性(名字相同)，使用的是set方法进行赋值，提取参数可使用get方法。
+                                    实例对象由SpringMVC创建，并且参数列表中可以有多个对象，SpringMVC会一次创建并将提交的参数赋值给相应的属性，
+                                    且对象和形参是可以共存的，SpringMVChui'jiang'ti'jaio'de'can'shu
+                                    还可以是Map，List集合，只要能将请求参数存进去的数据结构都可以。
+                                    且方法中可以任意定义参数类型password就是int就可以，springMVC会进行数据类型转换。
+                                    但注意由于形参的赋值来源于请求对象，编码格式是ISO-8859-1,所以需要提前设置编码格式，
+                                    通过过滤器进行设置:
+                                        使用框架写好的过滤器: 类: CharacterEncodingFilter设置请求对象的编码格式
+                                             <filter>
+                                                    <filter-name>charset</filter-name>
+                                                    过滤器的类
+                                                    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+                                                    过滤器的三个参数: encoding，forceRequestEncoding，forceResponseEncoding
+                                                    encoding: 字符编码格式
+                                                    <init-param>
+                                                        <param-name>encoding</param-name>
+                                                        <param-value>utf-8</param-value>
+                                                    </init-param>
+                                                    forceRequestEncoding: 强制请求对象编码格式
+                                                    <init-param>
+                                                        <param-name>forceRequestEncoding</param-name>
+                                                        <param-value>true</param-value>
+                                                    </init-param>
+                                                    forceResponseEncoding: 强制响应对象编码格式
+                                                    <init-param>
+                                                        <param-name>forceResponseEncoding</param-name>
+                                                        <param-value>true</param-value>
+                                                    </init-param>
+                                                </filter>
+                                                <filter-mapping>
+                                                    <filter-name>charset</filter-name>
+                                                    /*表示强制所有请求均被过滤
+                                                    <url-pattern>/*</url-pattern>
+                                                </filter-mapping>
+
+240) 在input标签中有两个属性可以将输入框设置为只读(readonly):
+        1, disabled(一般不使用):适用于所有input类型, 但不能随表单发送,<input type="xxx" disabled="disabled"/>
+        2, readonly(推荐使用): 只适用于text,password,textarea等类型，范围较小但可以随表单进行发送。 <input type="text" readonly="readonly"/>
+241) 更新功能的注意事项:
+        在更新信息时，一定要将更新的信息的主键带上，如果不带上就会造成更新信息失误或混乱，即在地址后面加上主键的值，发送到更新界面。
+            由于更新界面是jsp界面，所以可以使用request请求对象来直接获取相应的请求参数。
+        要将主键设置为只读类型，使用readonly，防止用户胡乱更新数据。这个很重要。
+242) 在JSP页面中有初始化的request对象，可以直接使用，获取请求参数或者进行跳转；
+        但注意这个request对象只能就是一个新的请求对象，只能获取当前请求的相关信息。
+     且一个JSP与一个Servlet对应，但JSP也可以没有Servlet，但注意这时JSP就相当于一个新的Servlet，和其他Servlet没有任何联系。
+243) 能处理请求的都是控制器(处理器),而springmvc中的controller类也叫做后端控制器(back controller)
+244) 快捷键: ctrl+F12  快速查找类中相关的方法
+245) 快捷键: F8 在DEBUG过程中单步执行。即一步一步走。
+246) 中央调度器DispatcherServlet处理请求的方式:
+            接收到请求后会执行servlet的service方法，在service方法中有一个doDispatcher(req,resp)方法(调度器方法),
+        doDispatcher()方法就是处理请求的方法，就是找到与请求绑定的方法，并且执行方法，最后拿到方法的返回值modelAndView。
+247) 在网站中放入到WEB-INF下的文件都是无法被用户访问的，所以一些需要保护的配置文件或者jsp都统一放在WEB-INF目录下。
+248) 由于在设置视图路径时，受保护的jsp路径统一为/WEB-INF/view/xxx.jsp; 显然格式相同，而框架中有工具来帮程序员简化过程:
+        视图解析器: 是框架中的一个类，在springmvc的容器中定义，进而使用。
+             <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                        前缀，就是文件统一的目录，前后都要有/
+                    <property name="prefix" value="/WEB-INF/view/"/>
+                        后缀，文件的扩展名
+                    <property name="suffix" value=".jsp"/>
+             </bean>
+        原理: 中央调度器在执行完方法拿到结果后，会使用视图解析器对视图的路径进行拼接，前缀+文件名+后缀，之后执行请求转发。
+249) @RequestMapping(value="")放在类的上面:
+           1,背景:    请求可以层次化: /test/some.do   /service/some.do,这是两种请求，一个类别是test，一个是service
+                  而@RequestMapping放在类的的上面就表示当前控制器处理的是哪一种类别的请求
+                      @RequestMapping(value="/test")就表示处理的是test类别的请求。
+            2，@RequestMapping(value="/xx")放在类的上面，@Controller的下面，这个又叫做模块名称，表示控制器中请求的类别。
+            3，这样做的意义: 在需要改动请求地址类别时就不需要在请求地址上一个个改，只需改变类上面的@RequestMapping的值即可。
+                        /test/xx.do 要变为 /service/xx.do 只需将类上的模块名称更改即可。
+250) 请求可以分层，层级可以是任意的，a/b/c/d/e.do,任意的。分层的思想主要是为了分类管理，更好的管理，和计算机，项目分层一个道理，便于管理。
+251) 400状态码: 表示请求参数再提交的过程中发生了错误，(一般是请求参数为空"",导致类型转换失败)
+252) int和Integer: Integer时int的包装类型，int不能接受空字符串的转换，但Integer可以接收空字符串的转换。更加通融一点。
+        Integer仍旧不能接收String字符串(abc)的转换，还是会报400状态码。
+253) 明确参数类型的意义:     age就必须是整形的，不能是字符串或者浮点数，所以age应该使用Integer不应使用String;
+                    虽然String更加方便，但代码没有限制，会有逻辑错误。
+254) 请求转发的原理: request.getRequestDispatcher()的返回值是 RequestDispatcher对象，这个对象相当于将跳转地址存了起来，
+                    之后RequestDispatcher对象执行forward(req,resp)进行跳转，forward才是跳转方法。
+255) 地址的分类:
+        1, 绝对地址: 当地址中带有协议名称则该请求地址为绝对地址。
+                例如: http://www.baidu.com   ftp://202.122.23.1
+                    分别带有http协议以及ftp文件传输协议，这些地址在网络中是唯一的，是一定能够访问到的，故称为绝对地址(绝对地址也指向IP地址);
+        2, 相对地址: 当地址中没有协议时，就是相对地址。
+            例如: /index.jsp   /some.do    都类似文件路径。
+            实际上 项目在请求地址时格式为   参考地址+相对地址
+                参考地址就是tomcat的URL，就是http://localhost:8080/网站名/
+                相对地址就是常说的URI,即网站名后面的地址，也就是tomcat Http服务器管理的文件路径，通过文件路径进而访问文件(发送请求)。
+256) 在JSP页面请求地址加不加"/"的区别:
+        当一个请求从从JSP页面中发起，发起的路径的格式是  JSP页面的参考地址(tomcat中的URL)+请求的地址，也就是说不需要加"/"就可以进行正常方法问。
+            当在JSP页面发起的请求加上了"/",发起的请求的格式就变为: JSP参考地址中的网站名之前的地址(http://localhost:8080/)就没有指定网站那么
+        就只是当前服务器的IP地址,是找不到文件的。
+            解决方法:
+                1, 可以在JSP页面的请求地址中主动加上网站名，来让请求生效。即 href="/myweb/some.do";
+                2, 可以在请求地址前面加入${pageContext.request.contextPath}这个就代表/myweb  并且当网站名更换时不需要一个个换网站名。
+     问题:    且当从JSP发送请求最终又回到这个JSP本身时，假设放出的请求是  user/some.do,那跳转之后的地址便是 参考地址/user/some.do.
+            如果此时再在这个页面发出同样的请求，则跳转后的地址便是  参考地址/user/user/some.do;因为新的参考地址是some.do前面的，也就是文件前面；
+            因为逻辑是参考地址+发出的请求地址。
+        解决方法:
+            1, 使用EL表达式${pageContext.request.contextPath},这样每次都会之tomcat中的url+相对地址。
+            2, 使用<base>标签，设置一个默认的参考地址，使每次请求的参考地址都是base中的地址。
+               另外<base href="http://x/xx/xxx/">标签用在<head>里面，加上就表示所有的请求地址只要不加"/"前面的参考地址就都是base中的地址。
+               <base> 中href的值一般就是当前网站的地址:   http://localhost:8080/myweb/
+               另外由于网站名可能随时更换所以一般使用以下格式:  用于定义base的默认路径。
+                    request.getScheme():获取协议  http等;
+                    request.getServerName():获取IP地址;
+                    request.getServerPort():获取端口;
+                    request.getContextPath():获取网站名(上下文地址);
+                    <%
+                        String basePath=request.getScheme()+"://"+request.getServerName()+":"
+                                +request.getServerPort()+request.getContextPath()+"/";
+                    %>
+257) SSM整合思路:
+        SpringMVC,Spring,Mybatis三者分别对应三个层次: 表现层，业务层，持久层;
+        整合步骤:
+            1, 创建两个容器，一个是SpringMVC的容器主要用于创建控制器(Controller)和其他Web对象，还有四个工具;
+               另外一个是Spring的容器:主要用于整合Mybatis以及定义业务对象。
+            2,注意: 在web.xml文件中有三项要创建:
+                    中央调度器(DispatcherServlet)  字节编码器(CharacterEncodingFilter) Spring容器监听器(ContextLoaderListenerR)
+                        这三者缺一不可，Spring监听器也需要设置Spring配置文件的位置:
+                            <context-param>
+                                <param-name>ContextConfigLocation</param-name>
+                                <param-value>classPath:xxx.xml</param-value>
+                            </context-param>
+                    Spring容器和SpringMVC容器在都被存入全局作用域对象中后:
+                        Spring容器会成为SpringMVC的父容器，也就是说SpringMVC中的对象可以引用Spring容器中的对象。
+258) 在Mybatis中使用package标签来映射SQL映射文件，需要满足:
+        1, SQL映射文件的名称和DAO接口的名称必须完全相同;
+        2, SQL映射文件和DAO接口必须在同一个目录下。
+259) 在写完配置文件后可以先跑一遍项目来确定是否项目有异常，以免异常挤压，导致异常过多，不好改正。
+260) 在编写select语句时不要乱用*，最好使用列名，这是由于表的结构可能改变，写*可能得不到对应的结果。
+261) 在文件夹中复制项目或者模块，并且在IDEA中打开的步骤:
+        1, 复制后改名;
+        2, 删除文件内部的iml文件，并且修改pom.xml文件中的文件名称。
+        3, 在项目结构中将新模块导入，并且设置JDK。
+262) 在SpringMVC中的请求转发和重定向:
+        1, 请求转发: 通过关键字: forward进行请求转发,使用方式: mv.setViewName("forward:视图的完整路径");
+              记住必须是完整路径，forward关键字会屏蔽视图解析器，不进行字符串拼接。
+           这种主要用于当要转发的页面的位置和视图解析器冲突时。即转发的页面不在/WEB-INF/view下。
+        2, 重定向: 通过关键字: Redirect进行重定向,使用方式: mv.setViewName("Redirect:视图的完整路径");
+            同样Redirect也会屏蔽视图解析器。
+          注意:
+            使用重定向时如果在ModelAndView中存放了参数，那么SpringMVC会自动将参数作为请求参数发送给重定向的地址(使用Get方式)。
+            而且由于WEB-INF下的文件浏览器不可以直接访问所以重定向显然不能重定向WEB-INF下的文件。
+263) SpringMVC的异常处理方式:
+        1，将所有异常统一放在一个地方，进行全局的统一处理，就类似AOP技术，将无关方法与业务处理方法分离，实现解耦合。
+        2，使用到的注解: @ExceptionHandler   @ControllerAdvice
+        3，@ControllerAdvice用在异常类的上面，异常类就是一个普通类，加入@ControllerAdvice就成为异常类。
+            需要注意2ControllerAdvice注解的类所在的包必须要让容器知道，即组件扫描器必须扫描这个包才可以。
+        4，@ExceptionHandler 使用在具体处理异常的方法上的注解，里面有一个属性: value = 自定义的异常.class(例如:Exception.class)
+                注解的方法和处理请求的方法一样，返回值可以是ModelAndView等，但参数通常是Exception ex，用来表示接收到的异常。
+            value也可以不写，表示未知异常在异常抛出后会从上到下根据value查询所对应的异常，如果都不对应则使用位置异常的形式处理。
+            处理异常的方法可以请求转发到一个JSP页面，用于向用户展示错误类型。
+264) 自定义异常的使用:
+        自定义的异常首先需要继承Exception类，并重写有参构造(一个message参数)和无参构造，使用super即可。
+        而在调用自定义异常时的方式: throw new XxException("自定义错误的描述:例如：名字格式不正确等");
+        而且在抛出异常时只需要抛出异常的父类即可，会将所有子类异常全部抛出。
+265) 在大的项目中通常逻辑需要十分缜密，所以异常的处理也是不可或缺的一部分。
+266) 拦截器:
+        1，在SpringMVC框架中只要实现了HandlerInterceptor这个接口的都叫做拦截器，主要用于拦截请求。
+        2，拦截器主要用于登录功能，权限查明，记录日志等功能。
+        3，使用步骤:
+            1) 定义一个类实现HandlerInterceptor接口，成为拦截器;
+            2) 在SpringMVC的配置文件声明拦截器。
+        4，拦截器的拦截时间:
+            1) 在请求被处理之前，也就是绑定的方法被调用之前，拦截器会先对请求进行判断;
+            2) 在绑定的方法执行完之后，拦截器还会进行拦截;
+            3) 在请求处理完之后，也就是JSP页面要提交后，tomcat将请求结果传入到响应体之前，拦截器还会进行拦截。
+        5，HandlerInterceptor接口中有三个方法分别对应三个拦截时间:preHandle(),postHandle(),afterCompletion();
+            这些方法需要用哪一个就重写哪一个。
+        6，preHandel(request,response,handle)三个参数分别是请求对象，响应对象和被拦截的控制器对象(就是绑定方法所在的类)
+            这个方法表示在请求被处理之前执行，称为预处理拦截，返回值时boolean。
+            返回值为true表示验证通过，为false表示验证失败，请求被拦截，请求不会被所绑定方法处理。
+            可以看出预处理方法是拦截的主体，也就是通过预处理方法(preHandle)进行的拦截。
+            而postHandle()和afterCompletion()必须在preHandle为true才可执行。
+                可以通过preHandle预处理拦截来控制用户是否可以进入网站。
+        7，postHandle(request,response,handle,mv)
+            比预处理拦截多了一个请求结果，所以该方法可以改变请求结果(例如将所用请求结果全部同意等),可以改变业务处理的数据和视图。
+            该拦截器主要用于对返回值进行修改或者增加数据，和切面(@around)类似。
+            注意: postHandle()拦截器只有同时满足对应的preHandle为真以及请求被处理(被绑定的方法处理)才可以执行。
+        8，afterCompletion(request,response,handle,ex)
+            比预处理拦截多了一个异常对象。
+            该拦截在请求完成后进行拦截，也就是JSP页面将要发送时拦截，通常用于资源回收(内存空间回收)，进行删除一些在处理请求的过程中定义的失去作用的对象。
+            注意: afterCompletion()处理器只要满足对应的preHandle为真就可以执行。
+        9，在SpringMVC容器中定义拦截器的规则:
+                <mvc:interceptors>   根标签 拦截器均在<interceptors>标签中创建
+                        <mvc:interceptor>  一个<interceptor>标签代表一个拦截器
+                            <mvc:mapping path="/**"/>  <mapping path="">表示拦截的请求，/**表示任意的请求地址，path表示的时uri
+                            <bean class="com.intercept.interceptor.first"/> <bean />表示在容器中定义拦截器。
+                        </mvc:interceptor>
+                    </mvc:interceptors>
+        10，容器中定义多个拦截器的情况:
+                1, 拦截器在容器中储存的方法是List集合，所以List集合中的数据满足先进先出的原则，也就是在<interceptors>中先定义的拦截器先执行。
+                    但注意: 这种先执行只是预处理拦截先执行，而postHandle和afterCompletion都是后执行，
+                            很显然这是为了保持先定义的拦截器的优先级，即先拦截，后修改。(拦截时首先进行拦截，而处理请求结果享有最终修改权。)
+        11，拦截器和过滤器的区别：
+            1，过滤器是Servlet规范下的类，而拦截器只是SpringMVC框架中的类，过滤器只要在有请求的项目中均能使用，但拦截器只要脱离SpringMVC就无法使用。
+                过滤器的实例对象是tomcat创建的，所有Servlet规范下的接口被实现后只要在web.xml文件中注册，tomcat就都会创建实例对象。
+                (不要忘记当前处理请求的唯一方式就是借助Servlet，所以要进行交互式网站就必须遵顼Servlet规范，也就是实现servlet规范下的接口)
+            2，过滤器可改变请求对象和响应对象，并将它们传递给处理请求的模块，就类似forward(req,resp),因此被用于设置请求对象和响应对象的编码格式等;
+                而拦截器只是可以借用请求对象和响应对象，并不能传递给处理请求的模块，因此无法提前设置编码格式等。而常常用于验证请求，拦截请求的。
+            3，过滤器有tomcat创建，拦截器有springMVC容器创建，显然过滤器要比springMVC先执行。
+            4，由于拦截器是SpringMVC容器中的工具所以只能靠中央调度器来调用。所以当请求不通过中央调度器控制则无法被拦截器拦截。
+267) 快捷键: ctrl+alt+O  可以快速的导入以及整理Java中导入的包
+268) 在项目中一个常用的思想: 当许多方法都共同拥有一个功能时便可以利用AOP的原理将该功能分离出来，不需要重复编写。预处理拦截(preHandle)就是这个理念。
+269) Java中的类: System类，里面可以获得当前系统的各种信息，例如当前时间: System.currentTimeMills(); 返回值是数字，获得当前的系统时间。
+270) 在一次会话中第一次请求时间最长，因为需要做大量的准备工作(像JSP文件的编码等)，而之后再次请求JSP页面就不需编码了，请求就会非常的快。
+271) 从session会话作用域对象中删除数据: session.removeAttribute("key");即可删除指定key的键值对。
+272) SpringMVC处理请求的流程:
+       用户--发出请求-->浏览器--发送请求-->tomcat--转发请求-->中央调度器--转发请求-->处理器映射器--从容器中取得相关的处理器-->中央调度器
+        --转发请求-->处理器适配器--得到处理器中所对应的方法的返回值-->中央调度器--发送视图的文件名-->视图解析器--将文件名转化为视图类(View)-->
+        中央调度器--请求转发-->对应视图--提交响应结果-->tomcat--将请求结果输送到响应体中-->浏览器--将Http相应协议包编码并展现-->用户
+     1，处理器映射器:
+                    1) 只要实现了接口HandleMapping接口的类就叫做处理器映射器，一个中央调度器连接着许多处理器映射器。
+                    2) HandlerExecutionChain,里面有两个属性: handel处理器和interceptor拦截器。
+                    3) 处理器执行链: 里面有处理器对象和项目中所有的拦截器，由它控制拦截器的执行和处理器的调用。
+                    4) 有许多映射器的原因: 在早期没有注解@Controller创建控制前对象时，是通过实现接口来达到控制器的效果(取代Servlet),
+                                而这样的接口有许多个这就造成了实现类会更多，而一种接口对应一种处理器映射器，所以会有许多处理器映射器。
+                           而当前使用注解所使用的处理器映射器是: RequestMappingHandelMapping类。
+     2，处理器适配器: 只要实现了HandleAdapter接口的类就叫做处理器适配器，一个中央调度器连接着许多处理器适配器。
+            处理器适配器用于调用相关的方法并且取得对应的请求结果。
+     3，视图解析器: 只要实现了viewResolver接口的类就叫做视图解析器，同样用许多不同的视图解析器不止InternalResourceViewResolve这一个视图解析器。
+        注意: 在框架中视图的地址:"xx.jsp"并不是一个字符串而是一个View类，地址是存储在View类中的，View专门用来表示视图，就像int专门用来表示整型变量一样。
+            可以这样理解: View是和String类似的一种数据结构，只不过只用来表示视图。
+            在ModelAndView中有相关的方法: mv.setView();里面写的是View对象。
+                例如: mv.setView(new RedirectView("/WEB-INF/view/a,jsp"));也可以实现重定向到a.jsp的目的。
+                此外还有许多视图类，但平常使用setViewName("xx")即可。
+                而同样InternalResourceViewResolve();进行的也不是字符串拼接而是将文件名转化为视图类。
+                注意: View视图类执行了请求转发，并不是请求对象，在中央调度器经过视图解析器获得相关视图后会去调用视图对象(View)的请求转发方法，进而转发到相关的jsp页面。
+         易于混淆的点: 视图并不是JSP页面，视图是一个类，有相关的方法进行请求转发到对应的JSP页面。
+      4，    有这么多工具(映射器，适配器和解析器)是为了分化功能，这也是项目中常用的思想，一个功能一个层次，这样就使当有一个功能需要更新时只需更新对应的层次，
+         其他层次的功能不会受到影响。
+      5，中央调度器对每个工具的调用都有相应的方法，方法的调用都在doDispatcher()中来调用，类似Servlet中的service方法调用doGet/doPost方法。
+273) 当文件路径找不到时就需要重新创建文件，这样问题就解决了。
+274) Git和Svn的区别:
+        1, 二者都是版本控制系统，主要用于管理软件等项目的版本，因为版本也是有区别的，有测试版的，用淘汰版的，有升级版的，这些都交给版本控制系统来管理。
+        2, Svn是集中式版本控制系统，所谓 集中式就是所有用户所提交的所有版本信息都存放在一个集中的服务器中，成为中央服务器，
+            所以当要从中央服务器中调取和传输数据就需要连接网络，才能传递信息嘛(在传输和获取版本信息时可能会途经多个运营商收费站，消耗流量较多)。
+            没有连接网络是无法传递或获取中央服务器中的版本信息的。
+        3, Git使用元数据方式存储信息，Svn使用文件的方式存储信息(将版本信息存储在.svn,.cvs等文件中)
+275) 服务器: 一般指一台具有某种功能的机器(当装了SVN server就是svn服务器，装了tomcat就是tomcat服务器)，可以存储和运行某种功能。
+276) 在Git中每个人都相当于一个中央存储器，而不同的存储器想要获得联系是通过推送进行沟通的，在推送中填写相应的url即可。
+        即每个人都有完整的版本信息，当某一个人员的仓库丢失或者共享资源库丢失，版本信息依旧有备份。
+        同样也有一个共享的资源库，用于存储每个人的版本信息，每个用户可以通过相关的命令进行提取和存储版本信息的操作。
+        Git中的三个命令:
+                        pull: 就是将共享资源库中的版本信息下载当前工作区;
+                            pull有fetch和merge两个部分构成，fetch表示获取，merge表示合并。
+                                也就是当从远程仓库中下载文件时要注意: pull会将与下载文件重名的本地文件覆盖，也就是说要考虑是否进行覆盖。
+                            同样也可以先用fetch命令获取文件，再考虑是否要merge文件(覆盖文件)。
+                        push: 就是推送，将本地资源库的信息推送到共享资源库;
+                        clone: 克隆，将共享资源库中的所有版本信息全部克隆到本地资源库。
+277) 元数据:  一种数据格式，又被称为中介数据，通过元数据可以搜索到所需要的数据，主要用于查找数据(信息);
+            专门用来存储其他数据的相关信息(日期，内容等),也就是用于存储数据的信息的一种数据格式。
+                百度百科介绍:
+                    元数据（Metadata），又称中介数据、中继数据，为描述数据的数据（data about data），
+                主要是描述数据属性（property）的信息，用来支持如指示存储位置、历史数据、资源查找、文件记录等功能。
+                元数据算是一种电子式目录，为了达到编制目录的目的，必须在描述并收藏数据的内容或特色，进而达成协助数据检索的目的。
+                都柏林核心集（Dublin Core Metadata Initiative，DCMI）是元数据的一种应用，
+                是1995年2月由国际图书馆电脑中心和美国国家超级计算应用中心所联合赞助的研讨会，
+                在邀请52位来自图书馆员、电脑专家，共同制定规格，创建一套描述网络上电子文件之特征。
+                元数据是关于数据的组织、数据域及其关系的信息，简言之，元数据就是关于数据的数据。
+278) Git的安装:
+        1,在Linux上安装:
+                通过命令进行安装，命名格式网址：   http://www.bjpowernode.com/tutorial_git/1823.html
+        2，在windows上安装根据步骤即可安装，主要要记得安装tortoiseGit。
+        3，tortoiseGit是Git的图形化工具，方便操作git的，同样也有语言包可以下载，下载在官网即可下载。
+279) Git的命令:
+        1, git config --list  查询当前Git用户的信息，里面有user和email的信息。
+        2, git config --global merge.tool vimdiff 为Git配置一个差异分析器，主要用于在下载的文件和本地文件重名时进行分析的。
+        3, git init  在当前文件夹创建仓库(repository)，该文件夹必须是空的，在使用git init 命令后该文件夹会自动生成一个.git的文件.
+                该.git文件是一个隐藏文件，叫做版本库。
+                同时只要在该仓库(目录)下创建的文件，就都会交给git进行管理。
+                在repository中创建的文件都可以右键进行添加(add)以及提交(commit),当前的提交是提交到本地仓库。
+        4, git add xx.yy  在仓库中添加文件，xx.yy是文件的名称和后缀。 注意添加是添加到了缓冲区而不是本地仓库。
+        5, git commit xx.yy 在仓库中提交文件
+                提交的流程:
+                    1) 使用命令:reverse
+                            在git.bash中写下git commit xx.yy命令后会进入编写注释界面遵循以下步骤:
+                        点击 i 键 进入插入模式(insert)  写入注释  写完先点击esc键再点击冒号键 : 再写入wq按下回车即可退出编辑界面完成提交。
+                        i-->Esc-->:-->wq-->Enter-->退出完成提交。
+                    2) 使用-m进行快速注释:
+                        格式: git commit xx.yy -m 注释
+                        这样可以快速提交并携带注释。但要注意使用-m提交的注释不能有空格
+        6, git status 该命令用于查看当前仓库是否有修改的地方，未进行提交的项目。可以使用git status-s获取简短的结果
+        7, git log  查询所有文件的历史修改信息，   git log --oneline  显示简化版的历史修改信息
+           git log xx.yy单独查询某个文件的历史修改信息。  git log --reverse 表示逆向显示所有历史修改信息(原本时最新修改，revserse后从第一次开始)
+            注意: 在退出git log界面时 要打印 ! 感叹号即可退出: !+Enter
+            使用tortoiseGit查看修改信息:
+                右键再tortoiseGit中选择查看日志即可查看到该文件的所有变更历程。
+            历史修改信息中会有 提交的用户的用户名以及提交的时间，还有相对应的注释。
+        8, git diff  打印出修改后的差异
+           也可使用tortoiseGit比较差异: 右键tortoiseGit选择比较差异就可以弹出比较界面。
+        9, 使用tortoiseGit可以撤销修改，同样是在tortoiseGit下的桓还原选项可以还原修改。撤销也可以撤销rm文件，是文件重新回到本地资源库。
+        10, git rm xx.yy  删除某个文件(同时也从本地资源库中删除)  rm:remove  和Linux中删除文件的命令是一样的。
+            删除文件: 仅仅使用ctrl+d进行删除，文件不会被完全删除，还会保存在本地资源库中。
+                而当使用tortoiseGit的删除选项时便可以将文件完全删除，本地资源库中也不会有备份。
+        11, git mv 原文件名  更改后的文件名    例如:  git mv first.xml second.xml
+            使用tortoiseGit可以对文件重命名(更名),更名有以下性质:
+                1, 更名后的文件需要重新提交;
+                2, 更名无法还原(撤销)。
+        12, 命令的组合会有许多可能性，例如: 当对一个文件更名后再进行修改，这样更名前和更名后就是两个文件，这样就可以还原更名前的文件。
+280) 通过tortoiseGit创建repository，在空文件夹中右键选择tortoiseGit的方式在当前位置创建repository。
+        注意: 不要选择创建纯版本仓库，纯版本仓库创建的只是.git文件。
+        .git就是版本库。
+281) git仓库的结构:
+        1，repository文件下分为工作区(.git文件外的文件)和版本库(.git文件)。
+        2，版本库的结构(.git文件):
+            1) 有index缓存区和分支空间(实际存储文件的位置)
+            2) 又有head指针指向分支空间(master)
+            3) 所以文件总是  add-->index--commit-->head--ref-->master  ref就是指向xxx。
+                master是git自动创建的第一个分支(也叫做主分支)。
+            4) 缓存区index的意义: 当大量文件一次提交时git会先将文件add到index之后再一次性commit到master等分支。
+282) 只要文件交给git管理 那么git就会记录工作区中每一个文件的每一次改变。
+283) 注意: 提交的项目中的注释写法要规范:  一般写对文件进行了什么修改操作，或者完成了什么行为(例如: 完成了用户登录模块或者开始编写用户登录模块)
+284) 在提交项目时显示的文件: 未受版本控制的文件很显然就是未受版本库(.git)管理的文件，也就是未添加和提交的文件。
+285) 将相关的项目存入仓库(repository)的方法就是 将项目粘贴到仓库中，并且添加并提交到版本库中。
+286) Github就是一个网站，是用于托管项目的，为大量程序员提供了共享资源的平台。
+        在Github上创建仓库的意义: 为项目备份且共享项目。
